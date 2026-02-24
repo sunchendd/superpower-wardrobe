@@ -1,0 +1,28 @@
+name: superpower_wardrobe
+description: Superpower Wardrobe - Smart outfit recommendations
+version: 1.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  supabase_flutter: ^2.5.0
+  riverpod: ^2.5.1
+  flutter_riverpod: ^2.5.1
+  image_picker: ^1.1.2
+  http: ^1.2.1
+  cached_network_image: ^3.3.1
+  shared_preferences: ^2.2.3
+  geolocator: ^11.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  mocktail: ^1.0.3
+
+flutter:
+  uses-material-design: true
