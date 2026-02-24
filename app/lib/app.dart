@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'features/shell/main_shell.dart';
 
 class SuperpowerWardrobeApp extends StatelessWidget {
   const SuperpowerWardrobeApp({super.key});
@@ -11,9 +12,7 @@ class SuperpowerWardrobeApp extends StatelessWidget {
         colorSchemeSeed: Colors.deepPurple,
         useMaterial3: true,
       ),
-      home: const Scaffold(
-        body: Center(child: Text('Superpower Wardrobe')),
-      ),
+      home: const MainShell(),
     );
   }
 }
