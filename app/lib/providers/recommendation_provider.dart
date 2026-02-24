@@ -27,10 +27,7 @@ final recommendationProvider =
     throw Exception('Not authenticated');
   }
 
-  final supabaseUrl = const String.fromEnvironment(
-    'SUPABASE_URL',
-    defaultValue: 'https://placeholder.supabase.co',
-  );
+  const supabaseUrl = 'https://gdoqygotjkxedkptimyh.supabase.co';
   final url = '$supabaseUrl/functions/v1/recommend';
 
   final response = await http
