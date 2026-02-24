@@ -8,6 +8,7 @@ class ClothingItem {
   final String color;
   final List<String> tags;
   final String? name;
+  final String season; // spring / summer / autumn / winter / all
   final DateTime createdAt;
 
   const ClothingItem({
@@ -18,17 +19,19 @@ class ClothingItem {
     required this.color,
     required this.tags,
     this.name,
+    this.season = 'all',
     required this.createdAt,
   });
 
   factory ClothingItem.fromJson(Map<String, dynamic> json) => ClothingItem(
         id: json['id'] as String,
         userId: json['user_id'] as String,
-        imageUrl: json['image_url'] as String,
+        imageUrl: json['image_url'] as String? ?? '',
         category: json['category'] as String,
         color: json['color'] as String,
         tags: List<String>.from((json['tags'] as List?) ?? []),
         name: json['name'] as String?,
+        season: json['season'] as String? ?? 'all',
         createdAt: DateTime.parse(json['created_at'] as String),
       );
 
@@ -38,6 +41,7 @@ class ClothingItem {
         'category': category,
         'color': color,
         'tags': tags,
+        'season': season,
         if (name != null) 'name': name,
       };
 }

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Superpower Wardrobe — 测试界面</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; background: #f0f2f5; color: #333; }
+  header { background: #1a1a2e; color: #fff; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  header h1 { font-size: 20px; }
+  .badge { background: #0f3460; padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+  .tabs { display: flex; background: #fff; border-bottom: 2px solid #e8e8e8; gap: 0; }
+  .tab { padding: 14px 24px; cursor: pointer; font-size: 14px; font-weight: 500; color: #888; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .2s; }
+  .tab.active { color: #1a1a2e; border-bottom-color: #1a1a2e; }
+  .tab:hover:not(.active) { background: #f9f9f9; }
+  .panel { display: none; padding: 24px; max-width: 900px; margin: 0 auto; }
+  .panel.active { display: block; }
+  .card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  .card h3 { font-size: 16px; margin-bottom: 14px; color: #1a1a2e; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .clothing-card { background: #f9f9f9; border-radius: 10px; padding: 14px; border: 1px solid #eee; }
+  .clothing-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; background: #ddd; }
+  .clothing-card .name { font-size: 13px; font-weight: 600; margin-top: 8px; }
+  .clothing-card .meta { font-size: 11px; color: #888; margin-top: 3px; }
+  .color-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; border: 1px solid #ccc; }
+  .del-btn { margin-top: 8px; padding: 4px 10px; background: #ff4d4f; color: #fff; border: none; border-radius: 6px; font-size: 11px; cursor: pointer; }
+  .form-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  label { font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block; color: #555; }
+  input, select { border: 1px solid #d9d9d9; border-radius: 8px; padding: 8px 12px; font-size: 14px; width: 100%; outline: none; }
+  input:focus, select:focus { border-color: #1a1a2e; }
+  .field { flex: 1; min-width: 140px; }
+  .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .2s; }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: #1a1a2e; color: #fff; }
+  .btn-success { background: #52c41a; color: #fff; }
+  .btn-secondary { background: #e8e8e8; color: #333; }
+  .rec-card { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+  .rec-card .weather { font-size: 13px; opacity: .7; margin-bottom: 8px; }
+  .rec-card .outfit-name { font-size: 22px; font-weight: 700; }
+  .rec-card .source { margin-top: 10px; font-size: 12px; opacity: .6; }
+  .rec-card .temp { font-size: 36px; font-weight: 300; }
+  .preset-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+  .preset-item:last-child { border-bottom: none; }
+  .preset-name { font-size: 14px; font-weight: 600; }
+  .preset-meta { font-size: 12px; color: #888; margin-top: 3px; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; margin-right: 4px; }
+  .tag-casual { background: #e6f7ff; color: #0050b3; }
+  .tag-work { background: #f6ffed; color: #237804; }
+  .tag-sport { background: #fff7e6; color: #ad4e00; }
+  .tag-formal { background: #f9f0ff; color: #531dab; }
+  .status { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 10px; }
+  .status.success { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+  .status.error { background: #fff2f0; color: #cf1322; border: 1px solid #ffa39e; }
+  .status.info { background: #e6f7ff; color: #0050b3; border: 1px solid #91d5ff; }
+  .empty { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
+  .classify-result { background: #fafafa; border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px; margin-top: 10px; }
+  .chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .chip { padding: 4px 12px; border-radius: 12px; font-size: 12px; background: #f0f0f0; color: #555; }
+  .chip.selected { background: #1a1a2e; color: #fff; }
+  .loader { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <div>👗</div>
+  <h1>Superpower Wardrobe</h1>
+  <span class="badge">本地测试</span>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('recommend')">今日推荐</div>
+  <div class="tab" onclick="switchTab('wardrobe')">我的衣橱</div>
+  <div class="tab" onclick="switchTab('add')">添加衣物</div>
+  <div class="tab" onclick="switchTab('presets')">预设套装</div>
+</div>
+
+<!-- ===== 今日推荐 ===== -->
+<div id="tab-recommend" class="panel active">
+  <div class="card">
+    <h3>🌤 获取今日推荐</h3>
+    <div class="form-row">
+      <div class="field">
+        <label>城市</label>
+        <input type="text" id="rec-city" value="Shanghai" placeholder="Beijing / Shanghai / 上海">
+      </div>
+      <div class="field">
+        <label>场合</label>
+        <select id="rec-occasion">
+          <option value="casual">休闲 casual</option>
+          <option value="work" selected>上班 work</option>
+          <option value="sport">运动 sport</option>
+          <option value="formal">正式 formal</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="getRecommendation()">获取推荐</button>
+  </div>
+  <div id="rec-result"></div>
+</div>
+
+<!-- ===== 我的衣橱 ===== -->
+<div id="tab-wardrobe" class="panel">
+  <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+    <h3>👕 我的衣橱</h3>
+    <button class="btn btn-secondary" onclick="loadWardrobe()">刷新</button>
+  </div>
+  <div id="wardrobe-filter" class="chip-row" style="margin: 0 0 16px;">
+    <span class="chip selected" onclick="filterCategory('all', this)">全部</span>
+    <span class="chip" onclick="filterCategory('tops', this)">上衣</span>
+    <span class="chip" onclick="filterCategory('bottoms', this)">下装</span>
+    <span class="chip" onclick="filterCategory('shoes', this)">鞋子</span>
+    <span class="chip" onclick="filterCategory('outerwear', this)">外套</span>
+    <span class="chip" onclick="filterCategory('accessories', this)">配饰</span>
+  </div>
+  <div id="wardrobe-grid" class="grid"></div>
+</div>
+
+<!-- ===== 添加衣物 ===== -->
+<div id="tab-add" class="panel">
+  <div class="card">
+    <h3>📷 添加衣物</h3>
+
+    <div class="form-row">
+      <div class="field" style="flex:2;">
+        <label>图片 URL（粘贴任意图片链接）</label>
+        <input type="url" id="add-img-url" placeholder="https://example.com/shirt.jpg">
+      </div>
+      <div class="field" style="align-self:flex-end;">
+        <button class="btn btn-secondary" onclick="classifyImage()" style="width:100%;">AI 识别</button>
+      </div>
+    </div>
+    <div id="classify-result"></div>
+
+    <div class="form-row" style="margin-top:14px;">
+      <div class="field">
+        <label>类别</label>
+        <select id="add-category">
+          <option value="tops">上衣 tops</option>
+          <option value="bottoms">下装 bottoms</option>
+          <option value="shoes">鞋子 shoes</option>
+          <option value="outerwear">外套 outerwear</option>
+          <option value="accessories">配饰 accessories</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>颜色</label>
+        <select id="add-color">
+          <option value="white">白色</option>
+          <option value="black">黑色</option>
+          <option value="blue">蓝色</option>
+          <option value="red">红色</option>
+          <option value="green">绿色</option>
+          <option value="grey">灰色</option>
+          <option value="brown">棕色</option>
+          <option value="beige">米色</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>风格标签（逗号分隔）</label>
+        <input type="text" id="add-tags" placeholder="casual, denim">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field" style="flex:2;">
+        <label>备注名称（选填）</label>
+        <input type="text" id="add-name" placeholder="白色T恤">
+      </div>
+    </div>
+    <button class="btn btn-success" onclick="addClothing()">保存到衣橱</button>
+    <div id="add-status"></div>
+  </div>
+</div>
+
+<!-- ===== 预设套装 ===== -->
+<div id="tab-presets" class="panel">
+  <div class="card">
+    <h3>✨ 预设套装</h3>
+    <div class="chip-row" style="margin-bottom:14px;">
+      <span class="chip selected" onclick="filterPreset('all', this)">全部</span>
+      <span class="chip" onclick="filterPreset('casual', this)">休闲</span>
+      <span class="chip" onclick="filterPreset('work', this)">上班</span>
+      <span class="chip" onclick="filterPreset('sport', this)">运动</span>
+      <span class="chip" onclick="filterPreset('formal', this)">正式</span>
+    </div>
+    <div id="presets-list"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://gdoqygotjkxedkptimyh.supabase.co';
+const ANON_KEY = 'sb_publishable_3ghgg1OkB541HcuqXqexIw_7aybcyjP';
+const CLIP_URL = 'http://localhost:8000';
+const DEMO_USER = '00000000-0000-0000-0000-000000000001';
+
+const COLOR_MAP = {
+  white:'#fff', black:'#111', blue:'#2563eb', red:'#ef4444', green:'#22c55e',
+  yellow:'#eab308', grey:'#9ca3af', brown:'#92400e', pink:'#ec4899', beige:'#d4b896'
+};
+
+function sbHeaders() {
+  return { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' };
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i)=> t.classList.toggle('active', ['recommend','wardrobe','add','presets'][i]===name));
+  document.querySelectorAll('.panel').forEach(p=> p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name==='wardrobe') loadWardrobe();
+  if (name==='presets') loadPresets();
+}
+
+// ===== 推荐 =====
+async function getRecommendation() {
+  const city = document.getElementById('rec-city').value || 'Shanghai';
+  const occasion = document.getElementById('rec-occasion').value;
+  const el = document.getElementById('rec-result');
+  el.innerHTML = '<div class="status info"><span class="loader"></span>正在获取天气和推荐...</div>';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/recommend`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY },
+      body: JSON.stringify({ city, occasion, user_id: DEMO_USER })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || JSON.stringify(data));
+
+    const { recommendation: rec, weather } = data;
+    const cond = weather?.condition || '';
+    const weatherIcon = cond.includes('Rain') ? '🌧' : cond.includes('Cloud') ? '⛅' : cond.includes('Snow') ? '❄️' : '☀️';
+
+    el.innerHTML = `
+      <div class="rec-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div class="weather">${weatherIcon} ${city} · ${cond}</div>
+            <div class="temp">${Math.round(weather?.temp ?? 0)}°C</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px; opacity:.7">推荐套装</div>
+            <div class="outfit-name">${rec.preset_name || '个人衣橱推荐'}</div>
+          </div>
+        </div>
+        <div class="source">来源: ${rec.source === 'preset' ? '预设套装' : '我的衣橱'} · 场合: ${occasion}</div>
+      </div>
+      <div class="card">
+        <h3>完整响应</h3>
+        <pre style="font-size:12px; color:#555; overflow:auto;">${JSON.stringify(data, null, 2)}</pre>
+      </div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="status error">❌ ${e.message}</div>`;
+  }
+}
+
+// ===== 衣橱 =====
+let allItems = [];
+async function loadWardrobe() {
+  const el = document.getElementById('wardrobe-grid');
+  el.innerHTML = '<div class="empty">加载中...</div>';
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/clothing_items?user_id=eq.${DEMO_USER}&select=*&order=created_at.desc`, { headers: sbHeaders() });
+    allItems = await res.json();
+    renderWardrobe(allItems);
+  } catch(e) {
+    el.innerHTML = `<div class="status error">❌ ${e.message}</div>`;
+  }
+}
+
+function renderWardrobe(items) {
+  const el = document.getElementById('wardrobe-grid');
+  if (!items.length) { el.innerHTML = '<div class="empty" style="grid-column:1/-1">衣橱是空的，去添加几件衣物吧 👕</div>'; return; }
+  el.innerHTML = items.map(item => {
+    const color = COLOR_MAP[item.color] || '#ccc';
+    const tags = (item.tags||[]).join(', ');
+    return `<div class="clothing-card">
+      ${item.image_url ? `<img src="${item.image_url}" onerror="this.style.display='none'">` : ''}
+      <div style="display:flex; align-items:center; margin-top:8px;">
+        <span class="color-dot" style="background:${color}"></span>
+        <span class="name">${item.category}</span>
+      </div>
+      <div class="meta">${item.color}${tags ? ' · '+tags : ''}</div>
+      ${item.name ? `<div class="meta" style="color:#1a1a2e;">${item.name}</div>` : ''}
+      <button class="del-btn" onclick="deleteItem('${item.id}')">删除</button>
+    </div>`;
+  }).join('');
+}
+
+function filterCategory(cat, el) {
+  document.querySelectorAll('#wardrobe-filter .chip').forEach(c=> c.classList.remove('selected'));
+  el.classList.add('selected');
+  renderWardrobe(cat==='all' ? allItems : allItems.filter(i=> i.category===cat));
+}
+
+async function deleteItem(id) {
+  if (!confirm('确认删除？')) return;
+  await fetch(`${SUPABASE_URL}/rest/v1/clothing_items?id=eq.${id}`, { method:'DELETE', headers: sbHeaders() });
+  loadWardrobe();
+}
+
+// ===== 添加衣物 =====
+async function classifyImage() {
+  const url = document.getElementById('add-img-url').value;
+  const el = document.getElementById('classify-result');
+  if (!url) { el.innerHTML = '<div class="status error">请先输入图片 URL</div>'; return; }
+  el.innerHTML = '<div class="status info"><span class="loader"></span>AI 识别中...</div>';
+
+  try {
+    const res = await fetch(`${CLIP_URL}/classify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image_url: url, user_id: DEMO_USER })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || JSON.stringify(data));
+
+    // Auto-fill form
+    document.getElementById('add-category').value = data.category || 'tops';
+    document.getElementById('add-color').value = data.color || 'white';
+    document.getElementById('add-tags').value = (data.tags||[]).join(', ');
+
+    el.innerHTML = `<div class="classify-result">
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px;">✅ AI 识别完成，表单已自动填充</div>
+      <div style="font-size:12px; color:#888;">类别: ${data.category} · 颜色: ${data.color} · 标签: ${(data.tags||[]).join(', ')}</div>
+      ${data.fallback ? '<div style="font-size:11px; color:#fa8c16; margin-top:4px;">⚠️ 模型未加载，使用默认值 — 请手动修改</div>' : ''}
+    </div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="status error">❌ ${e.message}<br><small>FashionCLIP 服务未启动？手动填写下方表单也可保存。</small></div>`;
+  }
+}
+
+async function addClothing() {
+  const image_url = document.getElementById('add-img-url').value;
+  const category = document.getElementById('add-category').value;
+  const color = document.getElementById('add-color').value;
+  const tags = document.getElementById('add-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const name = document.getElementById('add-name').value;
+  const el = document.getElementById('add-status');
+
+  if (!category) { el.innerHTML = '<div class="status error">请选择类别</div>'; return; }
+
+  try {
+    const body = { user_id: DEMO_USER, category, color, tags, image_url: image_url||null };
+    if (name) body.name = name;
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/clothing_items`, {
+      method: 'POST',
+      headers: { ...sbHeaders(), 'Prefer': 'return=representation' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) { const err = await res.json(); throw new Error(JSON.stringify(err)); }
+    el.innerHTML = '<div class="status success">✅ 已保存到衣橱！</div>';
+    document.getElementById('add-img-url').value = '';
+    document.getElementById('add-name').value = '';
+    document.getElementById('add-tags').value = '';
+    document.getElementById('classify-result').innerHTML = '';
+  } catch(e) {
+    el.innerHTML = `<div class="status error">❌ ${e.message}</div>`;
+  }
+}
+
+// ===== 预设套装 =====
+let allPresets = [];
+async function loadPresets() {
+  const el = document.getElementById('presets-list');
+  el.innerHTML = '加载中...';
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/preset_outfits?select=*&order=occasion`, { headers: sbHeaders() });
+    allPresets = await res.json();
+    renderPresets(allPresets);
+  } catch(e) {
+    el.innerHTML = `<div class="status error">❌ ${e.message}</div>`;
+  }
+}
+
+function renderPresets(items) {
+  const el = document.getElementById('presets-list');
+  if (!items.length) { el.innerHTML = '<div class="empty">无数据</div>'; return; }
+  el.innerHTML = items.map(p => `
+    <div class="preset-item">
+      <div>
+        <div class="preset-name">${p.name}</div>
+        <div class="preset-meta">${(p.weather_tags||[]).join(', ')}</div>
+      </div>
+      <span class="tag tag-${p.occasion}">${p.occasion}</span>
+    </div>`).join('');
+}
+
+function filterPreset(occ, el) {
+  document.querySelectorAll('#tab-presets .chip').forEach(c=> c.classList.remove('selected'));
+  el.classList.add('selected');
+  renderPresets(occ==='all' ? allPresets : allPresets.filter(p=> p.occasion===occ));
+}
+
+// 初始加载推荐
+getRecommendation();
+</script>
+</body>
+</html>

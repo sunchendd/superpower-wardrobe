@@ -89,11 +89,41 @@ verify:
 
 help:
 	@echo "用法："
-	@echo "  make setup-all ACCESS_TOKEN=<token>   # 一键完成所有部署"
+	@echo "  make setup-all ACCESS_TOKEN=<token>   # 一键完成所有 Supabase 部署"
 	@echo "  make db-migrate ACCESS_TOKEN=<token>  # 仅建表"
 	@echo "  make db-seed    ACCESS_TOKEN=<token>  # 仅插入 preset 数据"
 	@echo "  make fn-deploy  ACCESS_TOKEN=<token>  # 仅部署 Edge Function"
 	@echo "  make fn-secrets ACCESS_TOKEN=<token>  # 仅配置 Secrets"
 	@echo "  make verify                            # 验证部署结果"
 	@echo ""
+	@echo "Docker 部署（FashionCLIP + Web Demo）："
+	@echo "  make docker-up                         # 启动所有服务"
+	@echo "  make docker-down                       # 停止服务"
+	@echo "  make docker-logs                       # 查看日志"
+	@echo "  make docker-rebuild                    # 重新构建并启动"
+	@echo ""
 	@echo "获取 Access Token: https://supabase.com/dashboard/account/tokens"
+
+## Docker: 启动所有服务（FashionCLIP + Web Demo nginx）
+.PHONY: docker-up docker-down docker-logs docker-rebuild
+
+docker-up:
+	@echo "🐳 启动 Docker 服务..."
+	docker compose up -d
+	@echo "✅ 服务已启动"
+	@echo "   FashionCLIP API: http://localhost:8000/docs"
+	@echo "   Web Demo:        http://localhost:80"
+
+docker-down:
+	@echo "🛑 停止 Docker 服务..."
+	docker compose down
+
+docker-logs:
+	docker compose logs -f
+
+docker-rebuild:
+	@echo "🔨 重新构建并启动..."
+	docker compose down
+	docker compose build --no-cache
+	docker compose up -d
+	@echo "✅ 重建完成"

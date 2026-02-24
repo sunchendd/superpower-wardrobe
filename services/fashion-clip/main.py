@@ -6,8 +6,28 @@ from io import BytesIO
 
 app = FastAPI(title="FashionCLIP Service")
 
-CATEGORY_LABELS = ["tops", "bottoms", "shoes", "outerwear", "accessories"]
-COLOR_LABELS = ["white", "black", "blue", "red", "green", "yellow", "grey", "brown", "pink", "beige"]
+
+@app.get("/")
+def root():
+    return {
+        "service": "FashionCLIP",
+        "status": "running",
+        "endpoints": {
+            "health": "GET /health",
+            "classify": "POST /classify",
+            "docs": "GET /docs",
+        },
+    }
+
+
+CATEGORY_LABELS = [
+    "tops", "bottoms", "shoes", "outerwear", "accessories",
+    "watch", "hat", "jewelry", "bag",
+]
+COLOR_LABELS = [
+    "white", "black", "blue", "red", "green", "yellow",
+    "grey", "brown", "pink", "beige", "orange", "purple",
+]
 STYLE_LABELS = ["casual", "formal", "sport", "elegant", "streetwear", "denim", "knit", "leather"]
 
 _model = None
