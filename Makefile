@@ -12,32 +12,36 @@ PROJECT_REF    ?= your_project_ref
 SUPABASE_URL   ?= https://$(PROJECT_REF).supabase.co
 OPENWEATHER_KEY ?= 
 API_BASE     = https://api.supabase.com/v1/projects/$(PROJECT_REF)
-MIGRATION    = supabase/migrations/20260224000001_init.sql
+MIGRATIONS   = $(sort $(wildcard supabase/migrations/*.sql))
 SEED         = supabase/seed.sql
 
-.PHONY: setup-all db-migrate db-seed fn-deploy fn-secrets help
+.PHONY: setup-all db-migrate db-seed fn-deploy fn-deploy-all fn-secrets help
 
 ## 一键完成所有步骤
-setup-all: db-migrate db-seed fn-deploy fn-secrets
+setup-all: db-migrate db-seed fn-deploy-all fn-secrets
 	@echo ""
 	@echo "✅ 所有步骤完成！"
 	@echo "   Supabase URL  : $(SUPABASE_URL)"
-	@echo "   Edge Function : $(SUPABASE_URL)/functions/v1/recommend"
+	@echo "   Edge Functions: $(SUPABASE_URL)/functions/v1/recommend"
+	@echo "                   $(SUPABASE_URL)/functions/v1/purchase-suggest"
 	@echo ""
 
-## 第1步：应用数据库 Migration（建表 + RLS）
+## 第1步：应用所有数据库 Migrations（按文件名顺序）
 db-migrate:
 ifndef ACCESS_TOKEN
 	$(error ❌ 缺少 ACCESS_TOKEN. 用法: make setup-all ACCESS_TOKEN=your_token)
 endif
 	@echo "📦 应用数据库 migrations..."
-	@SQL=$$(cat $(MIGRATION) | tr '\n' ' ' | sed "s/'/\\\\''/g"); \
-	curl -sf -X POST "$(API_BASE)/database/query" \
-	  -H "Authorization: Bearer $(ACCESS_TOKEN)" \
-	  -H "Content-Type: application/json" \
-	  -d "{\"query\": \"$$SQL\"}" \
-	  && echo "✅ Migrations 应用成功" \
-	  || echo "⚠️  Migrations 可能已存在，继续..."
+	@for f in $(MIGRATIONS); do \
+	  echo "  → $$f"; \
+	  SQL=$$(cat $$f | tr '\n' ' ' | sed "s/'/\\\\''/g"); \
+	  curl -sf -X POST "$(API_BASE)/database/query" \
+	    -H "Authorization: Bearer $(ACCESS_TOKEN)" \
+	    -H "Content-Type: application/json" \
+	    -d "{\"query\": \"$$SQL\"}" \
+	    && echo "    ✅ 成功" \
+	    || echo "    ⚠️  可能已存在，继续..."; \
+	done
 
 ## 第2步：插入 preset 种子数据
 db-seed:
@@ -53,8 +57,10 @@ endif
 	  && echo "✅ Seed 数据插入成功" \
 	  || echo "⚠️  Seed 数据可能已存在，继续..."
 
-## 第3步：部署 Edge Function（使用 supabase CLI）
-fn-deploy:
+## 第3步：部署所有 Edge Functions
+fn-deploy-all: fn-deploy-recommend fn-deploy-purchase
+
+fn-deploy-recommend:
 ifndef ACCESS_TOKEN
 	$(error ❌ 缺少 ACCESS_TOKEN)
 endif
@@ -62,7 +68,20 @@ endif
 	SUPABASE_ACCESS_TOKEN=$(ACCESS_TOKEN) supabase functions deploy recommend \
 	  --project-ref $(PROJECT_REF) \
 	  --no-verify-jwt=false
-	@echo "✅ Edge Function 部署成功"
+	@echo "✅ recommend 部署成功"
+
+fn-deploy-purchase:
+ifndef ACCESS_TOKEN
+	$(error ❌ 缺少 ACCESS_TOKEN)
+endif
+	@echo "🚀 部署 Edge Function: purchase-suggest..."
+	SUPABASE_ACCESS_TOKEN=$(ACCESS_TOKEN) supabase functions deploy purchase-suggest \
+	  --project-ref $(PROJECT_REF) \
+	  --no-verify-jwt=false
+	@echo "✅ purchase-suggest 部署成功"
+
+## 兼容旧命令
+fn-deploy: fn-deploy-all
 
 ## 第4步：设置 Edge Function 环境变量
 fn-secrets:

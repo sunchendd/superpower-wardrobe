@@ -1,41 +1,105 @@
-# superpower-wardrobe
-「超能力衣橱（superpower wardrobe）」的应用程式，具备以下功能：  拍照识别衣物，并将其导入虚拟衣橱 根据以下条件每日自动推荐穿搭：  个人偏好 地理位置 天气状况   显示数位化分身（Avatar）穿着不同服装组合的效果
-Superpower 你的衣橱 — 开源生态全景
-已找到非常不错的开源基础！不需要从零开始，以下是最佳路线：
+# 超能力衣橱 Superpower Wardrobe
 
-🏗️ 推荐技术栈（4层架构）
-层级	功能	推荐项目	License
-Layer 1	衣橱 App 骨架	OpenWardrobe（Flutter + Supabase）	✅ MIT
-Layer 2	拍照识别衣物	FashionCLIP（CLIP微调，492⭐）	✅ MIT
-Layer 3	天气+偏好 穿搭推荐	Outfit Assistant（TF.js + OpenWeather）	🟡 无声明
-Layer 4	数字分身试穿效果	OOTDiffusion（6500⭐，Stable Diffusion）	✅ Apache-2.0
-🎯 各层详解
-Layer 1 — OpenWardrobe
-Flutter 全平台（iOS / Android / Web）+ Supabase 后端
-已有：上传衣物、创建穿搭、穿搭日历、天气建议框架、无广告可自托管
-⚠️ 已归档（2025年7月）→ 直接 Fork 作为你自己的主仓库
-Layer 2 — FashionCLIP
-700K+ 时尚图文对微调的 CLIP 模型，分类 F1 达 0.83
-以 Python 微服务形式挂载到 Supabase Edge Functions
-Layer 3 — 穿搭推荐引擎
-Weather-to-Wear：TypeScript，实时天气 → 衣橱映射，8⭐，2025年活跃
-FashionAI：Python，偏好 + 天气综合推荐，16⭐
-两者都可作为算法参考，规则植入你的 Supabase Functions
-Layer 4 — 数字分身试穿
-模型	显存需求	License	特点
-OOTDiffusion	~16GB	✅ Apache-2.0	最多星，HuggingFace Space 可直接调 API
-CatVTON	<8GB	⚠️ CC BY-NC	最轻量，支持 ComfyUI，视频试穿
-IDM-VTON	~16GB	⚠️ CC BY-NC	野外照片效果最佳
-🚀 建议行动路线
-💡 是否需要 Vibe Coding？
-不需要从零开始，但需要大量集成工作：
+> 参考氢气衣橱 App 设计，原生双端智能衣橱管理应用。
 
-OpenWardrobe 的 Flutter + Supabase 骨架 → 直接用
-FashionCLIP + OOTDiffusion → 接 API 即可
-推荐引擎逻辑 → 需要自己写业务逻辑（这里最适合 vibe coding）
-想从哪一层开始动手？ 我可以帮你：
+## ✨ 功能特性
 
-搭建 OpenWardrobe 本地开发环境 + Fork 改造
-写 FashionCLIP 识别服务的 Python API
-设计穿搭推荐算法（天气 + 偏好 + 场合）
-对接 OOTDiffusion 试穿渲染流水线
+| 功能 | 说明 |
+|------|------|
+| 🗂️ 衣物管理 | 拍照/相册/电商链接录入，AI 自动识别品类/颜色/风格 |
+| 👔 品类分类 | 上衣/下装/外套/鞋子/配饰，支持子分类 |
+| 🌤️ 每日推荐 | 基于天气+场合+个人偏好的智能穿搭推荐 |
+| 🛒 购买建议 | 衣橱缺口分析 + 当季趋势 + 风格匹配 |
+| 📸 穿搭日记 | 拍照记录每日穿搭，支持社交分享 |
+| 📊 数据统计 | 品类/色系/利用率/花费可视化分析 |
+| 📅 穿搭日历 | 日历视图回顾历史穿搭 |
+| ✈️ 旅行规划 | 提前规划出行每日穿搭 |
+
+## 🏗️ 技术架构
+
+```
+┌────────────────────────────────────────┐
+│         客户端 (Native Apps)            │
+│  iOS (SwiftUI)  │  Android (Compose)   │
+│         └───── Supabase SDK ─────┘     │
+└────────────────────┬───────────────────┘
+                     │
+┌────────────────────┴───────────────────┐
+│          Supabase Cloud                │
+│  Auth │ Storage │ PostgreSQL │ Edge Fn │
+└────────────────────┬───────────────────┘
+                     │
+┌────────────────────┴───────────────────┐
+│          AI 微服务 (Docker)             │
+│  FashionCLIP (识别) │ 推荐引擎 (Python) │
+└────────────────────────────────────────┘
+```
+
+## 📁 项目结构
+
+```
+superpower-wardrobe/
+├── ios/                    # iOS 原生应用 (SwiftUI)
+│   └── SuperWardrobe/
+├── android/                # Android 原生应用 (Kotlin Compose)
+│   └── superwardrobe/
+├── services/
+│   └── fashion-clip/       # FashionCLIP AI 识别服务 (FastAPI)
+├── supabase/
+│   ├── migrations/         # 数据库迁移 (PostgreSQL)
+│   └── functions/          # Edge Functions
+│       ├── recommend/      # 穿搭推荐
+│       └── purchase-suggest/  # 购买建议
+├── web-demo/               # Web 测试界面
+├── docs/                   # 设计文档
+├── docker-compose.yml      # Docker 部署
+└── Makefile                # 一键部署命令
+```
+
+## 🚀 快速开始
+
+### 1. 部署后端服务
+
+```bash
+cp .env.example .env       # 填写配置
+source .env
+
+# 部署 Supabase（数据库 + Edge Functions）
+make setup-all ACCESS_TOKEN=your_token OPENWEATHER_KEY=your_key
+
+# 启动 AI 服务（FashionCLIP + Web Demo）
+make docker-up
+```
+
+### 2. iOS 开发
+
+```bash
+cd ios/SuperWardrobe
+open Package.swift          # 用 Xcode 打开
+# 修改 Constants.swift 中的 Supabase 配置
+# Command + R 运行
+```
+
+### 3. Android 开发
+
+```bash
+cd android/superwardrobe
+# 用 Android Studio 打开项目
+# 修改 Constants.kt 中的 Supabase 配置
+# 运行
+```
+
+### 服务端口
+
+| 服务 | 地址 |
+|------|------|
+| FashionCLIP API | http://localhost:8000/docs |
+| Web Demo | http://localhost:80 |
+| Supabase | https://\<project-ref\>.supabase.co |
+
+## 📖 文档
+
+- [重构设计文档](docs/plans/2026-03-06-wardrobe-refactor-design.md)
+- [MVP 设计文档](docs/2026-02-24-superpower-wardrobe-design.md)
+- [MVP 实施计划](docs/2026-02-24-superpower-wardrobe-mvp-plan.md)
+

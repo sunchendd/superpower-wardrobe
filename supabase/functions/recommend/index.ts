@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { buildRecommendation } from "./recommend_logic.ts";
+import { buildMultipleRecommendations } from "./recommend_logic.ts";
 
 const OPENWEATHER_KEY = Deno.env.get("OPENWEATHER_API_KEY");
 
@@ -52,7 +52,6 @@ async function fetchWeather(
 }
 
 serve(async (req) => {
-  // Handle CORS preflight (web-demo / browser clients)
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
@@ -70,7 +69,13 @@ serve(async (req) => {
     );
 
     const body = await req.json();
-    const { user_id, city = "Shanghai", occasion = "casual", season: forceSeason } = body;
+    const {
+      user_id,
+      city = "Shanghai",
+      occasion = "casual",
+      season: forceSeason,
+      count = 3,
+    } = body;
 
     if (!user_id) {
       return json({ error: "user_id required" }, 400);
@@ -84,44 +89,77 @@ serve(async (req) => {
 
     const effectiveSeason: string = forceSeason ?? weather.season;
 
-    const recommendation = buildRecommendation(
+    const recommendations = buildMultipleRecommendations(
       items ?? [],
       presets ?? [],
       weather,
       occasion,
-      effectiveSeason
+      effectiveSeason,
+      count
     );
 
-    // Save ai_generated outfit to outfits table
-    let outfit_id: string | null = null;
-    if (recommendation.source === "ai_generated" && recommendation.item_ids.length > 0) {
-      const { data: outfit } = await supabase
-        .from("outfits")
-        .insert({
-          user_id,
-          item_ids: recommendation.item_ids,
-          occasion,
-          season: effectiveSeason,
-          source: "ai_generated",
-        })
-        .select()
-        .single();
-      outfit_id = outfit?.id ?? null;
+    // Persist each ai_generated outfit via outfits + outfit_items junction table
+    const outfitResults: Array<{
+      outfit_id: string | null;
+      recommendation: typeof recommendations[number];
+    }> = [];
+
+    for (const rec of recommendations) {
+      let outfit_id: string | null = null;
+
+      if (rec.source === "ai_generated" && rec.item_ids.length > 0) {
+        const { data: outfit } = await supabase
+          .from("outfits")
+          .insert({
+            user_id,
+            item_ids: rec.item_ids,
+            occasion,
+            season: effectiveSeason,
+            source: "ai_generated",
+          })
+          .select()
+          .single();
+
+        outfit_id = outfit?.id ?? null;
+
+        // Insert into outfit_items junction table
+        if (outfit_id) {
+          const junctionRows = rec.item_ids.map((clothing_item_id: string) => ({
+            outfit_id,
+            clothing_item_id,
+          }));
+          await supabase.from("outfit_items").insert(junctionRows);
+        }
+      }
+
+      outfitResults.push({ outfit_id, recommendation: rec });
     }
 
+    // Store primary recommendation in daily_recommendations
     const today = new Date().toISOString().split("T")[0];
+    const primary = outfitResults[0];
     await supabase.from("daily_recommendations").upsert(
       {
         user_id,
         date: today,
-        outfit_id,
+        outfit_id: primary?.outfit_id ?? null,
         weather_data: weather,
+        reason_text: primary?.recommendation.reason_text ?? null,
         accepted: false,
       },
       { onConflict: "user_id,date" }
     );
 
-    return json({ recommendation, weather, outfit_id });
+    return json({
+      recommendations: outfitResults.map((r) => ({
+        ...r.recommendation,
+        outfit_id: r.outfit_id,
+      })),
+      weather,
+      // Backwards-compatible fields
+      recommendation: primary?.recommendation ?? recommendations[0],
+      outfit_id: primary?.outfit_id ?? null,
+    });
   } catch (err) {
     return json({ error: String(err) }, 500);
   }

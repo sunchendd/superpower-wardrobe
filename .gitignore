@@ -1,2 +1,32 @@
 .env
 supabase/.temp/
+
+# iOS
+ios/SuperWardrobe/.build/
+ios/SuperWardrobe/.swiftpm/
+ios/SuperWardrobe/Package.resolved
+*.xcodeproj
+*.xcworkspace
+*.xcuserstate
+xcuserdata/
+DerivedData/
+
+# Android
+android/superwardrobe/.gradle/
+android/superwardrobe/build/
+android/superwardrobe/app/build/
+android/superwardrobe/local.properties
+*.apk
+*.aab
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
