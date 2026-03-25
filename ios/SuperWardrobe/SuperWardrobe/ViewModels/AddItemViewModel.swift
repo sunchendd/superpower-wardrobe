@@ -18,8 +18,10 @@ final class AddItemViewModel {
     var purchasePrice: String = ""
     var errorMessage: String?
 
+    /// Set to true after classification if the provider doesn't support vision
+    var visionUnavailable: Bool = false
+
     private let aiService = AIService.shared
-    private let fashionCLIPService = FashionCLIPService.shared
 
     let seasonOptions = ["spring", "summer", "autumn", "winter", "all"]
     let seasonLabels  = ["春", "夏", "秋", "冬", "四季"]
@@ -28,30 +30,32 @@ final class AddItemViewModel {
 
     func classifyImage(_ image: UIImage) async {
         capturedImage = image
+        visionUnavailable = false
         isClassifying = true
         defer { isClassifying = false }
 
-        if aiService.isConfigured {
-            // Use DeepSeek AI
-            do {
-                let result = try await aiService.classifyClothing(image: image)
-                aiResult = result
-                color = result.color
-                styleTags = result.styleTags
-                season = result.season
-                itemName = result.description.isEmpty ? result.category : result.description
-                selectedCategory = Category.defaultCategories.first { $0.name == result.category }
-            } catch {
-                errorMessage = error.localizedDescription
-            }
-        } else {
-            // Fallback: try FashionCLIP (local backend) silently
-            if let result = try? await fashionCLIPService.classifyImage(image) {
-                color = result.color
-                styleTags = result.style
-                itemName = result.category
-            }
-            // No error shown — user can fill in manually
+        guard aiService.isConfigured else {
+            // No AI configured — user fills in manually
+            return
+        }
+
+        guard aiService.selectedProvider.supportsVision else {
+            // Provider is text-only (e.g. DeepSeek)
+            visionUnavailable = true
+            return
+        }
+
+        do {
+            let result = try await aiService.classifyClothing(image: image)
+            aiResult = result
+            color = result.colorHex
+            styleTags = result.styleTags
+            season = result.season
+            itemName = result.description.isEmpty ? result.category : result.description
+            // Match category name to default categories
+            selectedCategory = Category.defaultCategories.first { $0.name == result.category }
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 
@@ -67,7 +71,6 @@ final class AddItemViewModel {
         defer { isSaving = false }
 
         let imageData = LocalDataService.compressImage(image)
-
         let local = LocalClothingItem(
             name: itemName.isEmpty ? nil : itemName,
             imageData: imageData,
@@ -91,6 +94,7 @@ final class AddItemViewModel {
         capturedImage = nil
         processedImage = nil
         aiResult = nil
+        visionUnavailable = false
         selectedCategory = nil
         itemName = ""
         brand = ""

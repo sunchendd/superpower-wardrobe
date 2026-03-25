@@ -119,11 +119,14 @@ struct ItemEditView: View {
             }
 
             // AI result
-            if let result = viewModel.classificationResult {
+            if let result = viewModel.aiResult {
                 Section("AI 识别结果") {
                     LabeledContent("分类", value: result.category)
-                    LabeledContent("颜色", value: result.color)
+                    LabeledContent("颜色", value: result.colorHex)
                     LabeledContent("置信度", value: String(format: "%.1f%%", result.confidence * 100))
+                    if !result.description.isEmpty {
+                        LabeledContent("描述", value: result.description)
+                    }
                 }
             }
         }

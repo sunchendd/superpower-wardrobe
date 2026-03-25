@@ -1,158 +1,211 @@
 import Foundation
 import UIKit
 
-// MARK: - AI Response Models
-
-private struct ChatCompletionRequest: Encodable {
-    let model: String
-    let messages: [Message]
-    let maxTokens: Int
-
-    enum CodingKeys: String, CodingKey {
-        case model, messages
-        case maxTokens = "max_tokens"
-    }
-
-    struct Message: Encodable {
-        let role: String
-        let content: [ContentPart]
-    }
-
-    enum ContentPart: Encodable {
-        case text(String)
-        case imageUrl(String)
-
-        func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            switch self {
-            case .text(let str):
-                try container.encode("text", forKey: .type)
-                try container.encode(str, forKey: .text)
-            case .imageUrl(let url):
-                try container.encode("image_url", forKey: .type)
-                try container.encode(["url": url], forKey: .imageUrl)
-            }
-        }
-
-        enum CodingKeys: String, CodingKey {
-            case type, text
-            case imageUrl = "image_url"
-        }
-    }
-}
-
-private struct ChatCompletionResponse: Decodable {
-    let choices: [Choice]
-
-    struct Choice: Decodable {
-        let message: Message
-    }
-    struct Message: Decodable {
-        let content: String
-    }
-}
-
 // MARK: - AI Classification Result
 
 struct AIClassificationResult {
     let category: String       // 上衣 / 裤子 / 裙子 / 外套 / 鞋子 / 配饰
-    let color: String          // hex color e.g. #FFFFFF
+    let colorHex: String       // e.g. "#FFFFFF"
     let styleTags: [String]    // e.g. ["休闲", "简约"]
     let season: String         // spring / summer / autumn / winter / all
     let confidence: Double     // 0-1
-    let description: String    // human-readable description
+    let description: String    // 简短中文描述
+}
+
+// MARK: - AI Provider
+
+enum AIProvider: String, CaseIterable, Identifiable {
+    case qwen     = "通义千问（推荐·支持识图）"
+    case deepseek = "DeepSeek（仅文字推荐）"
+
+    var id: String { rawValue }
+
+    var defaultBaseURL: String {
+        switch self {
+        case .qwen:     return "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        case .deepseek: return "https://api.deepseek.com/v1"
+        }
+    }
+
+    var visionModel: String {
+        switch self {
+        case .qwen:     return "qwen-vl-plus"   // 支持图片
+        case .deepseek: return ""               // 不支持视觉
+        }
+    }
+
+    var textModel: String {
+        switch self {
+        case .qwen:     return "qwen-plus"
+        case .deepseek: return "deepseek-chat"
+        }
+    }
+
+    var supportsVision: Bool {
+        switch self {
+        case .qwen:     return true
+        case .deepseek: return false
+        }
+    }
+
+    var registrationURL: String {
+        switch self {
+        case .qwen:     return "https://bailian.console.aliyun.com/"
+        case .deepseek: return "https://platform.deepseek.com"
+        }
+    }
+
+    var keyPlaceholder: String {
+        switch self {
+        case .qwen:     return "sk-..."
+        case .deepseek: return "sk-..."
+        }
+    }
+
+    var freeQuota: String {
+        switch self {
+        case .qwen:     return "免费额度：每月 100 万 tokens"
+        case .deepseek: return "按量付费，价格极低"
+        }
+    }
+}
+
+// MARK: - Chat Request Models
+
+private struct ChatMessage: Encodable {
+    let role: String
+    let content: [ContentPart]
+}
+
+private enum ContentPart: Encodable {
+    case text(String)
+    case imageURL(String)
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .text(let str):
+            try c.encode("text", forKey: .type)
+            try c.encode(str, forKey: .text)
+        case .imageURL(let url):
+            try c.encode("image_url", forKey: .type)
+            try c.encode(ImageURLWrapper(url: url), forKey: .imageUrl)
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case type, text
+        case imageUrl = "image_url"
+    }
+
+    private struct ImageURLWrapper: Encodable {
+        let url: String
+    }
+}
+
+private struct ChatRequest: Encodable {
+    let model: String
+    let messages: [ChatMessage]
+    let maxTokens: Int
+    enum CodingKeys: String, CodingKey {
+        case model, messages
+        case maxTokens = "max_tokens"
+    }
+}
+
+private struct ChatResponse: Decodable {
+    let choices: [Choice]
+    struct Choice: Decodable {
+        let message: Msg
+    }
+    struct Msg: Decodable {
+        let content: String
+    }
 }
 
 // MARK: - AI Service
 
-/// Calls DeepSeek (OpenAI-compatible) API for clothing classification and recommendations.
+/// Unified AI service supporting 通义千问 (vision + text) and DeepSeek (text only).
 /// Users configure their own API key in Settings → AI 功能.
 @Observable
 final class AIService {
     static let shared = AIService()
+    private init() {}
 
-    private let apiKeyKey = "deepseek_api_key"
-    private let baseURLKey = "deepseek_base_url"
+    // MARK: - Persisted settings
 
-    // MARK: - State
-
-    var apiKey: String {
-        get { UserDefaults.standard.string(forKey: apiKeyKey) ?? "" }
-        set { UserDefaults.standard.set(newValue, forKey: apiKeyKey) }
+    var selectedProvider: AIProvider {
+        get {
+            let raw = UserDefaults.standard.string(forKey: "ai_provider") ?? AIProvider.qwen.rawValue
+            return AIProvider(rawValue: raw) ?? .qwen
+        }
+        set { UserDefaults.standard.set(newValue.rawValue, forKey: "ai_provider") }
     }
 
-    var baseURL: String {
-        get { UserDefaults.standard.string(forKey: baseURLKey) ?? "https://api.deepseek.com" }
-        set { UserDefaults.standard.set(newValue, forKey: baseURLKey) }
+    var apiKey: String {
+        get { UserDefaults.standard.string(forKey: "ai_api_key") ?? "" }
+        set { UserDefaults.standard.set(newValue, forKey: "ai_api_key") }
     }
 
     var isConfigured: Bool { !apiKey.trimmingCharacters(in: .whitespaces).isEmpty }
 
-    // MARK: - Image Classification
+    // MARK: - Image Classification (vision required)
 
-    /// Classify a clothing image and return category, color, style tags etc.
     func classifyClothing(image: UIImage) async throws -> AIClassificationResult {
         guard isConfigured else { throw AIError.notConfigured }
+        guard selectedProvider.supportsVision else { throw AIError.visionNotSupported(selectedProvider) }
 
-        guard let imageData = LocalDataService.compressImage(image, maxDimension: 512, quality: 0.7) else {
+        guard let data = LocalDataService.compressImage(image, maxDimension: 512, quality: 0.7) else {
             throw AIError.imageEncodingFailed
         }
-        let base64 = imageData.base64EncodedString()
-        let dataURL = "data:image/jpeg;base64,\(base64)"
+        let dataURL = "data:image/jpeg;base64,\(data.base64EncodedString())"
 
         let prompt = """
-        请分析这张服装图片，以 JSON 格式返回以下信息（只返回 JSON，不要额外说明）：
+        分析这件衣物图片，仅以 JSON 格式返回（不要任何其他内容）：
         {
           "category": "上衣|裤子|裙子|外套|鞋子|配饰",
-          "color_hex": "#RRGGBB（主要颜色的十六进制）",
-          "style_tags": ["标签1", "标签2"],
+          "color_hex": "#RRGGBB",
+          "style_tags": ["标签1","标签2"],
           "season": "spring|summer|autumn|winter|all",
           "confidence": 0.0-1.0,
-          "description": "简短描述（中文，15字以内）"
+          "description": "简短中文描述（10字以内）"
         }
-        style_tags 从以下选取1-3个：休闲、商务、运动、日系、欧美、简约、复古、街头、优雅、度假
+        style_tags 从以下选1-3个：休闲、商务、运动、日系、欧美、简约、复古、街头、优雅、度假
         """
 
-        let responseText = try await callAPI(
-            userContent: [.text(prompt), .imageUrl(dataURL)],
-            model: "deepseek-chat"
+        let response = try await call(
+            model: selectedProvider.visionModel,
+            content: [.text(prompt), .imageURL(dataURL)]
         )
-
-        return parseClassificationResult(from: responseText)
+        return parseClassification(response)
     }
 
-    /// Generate a natural-language outfit recommendation based on weather and wardrobe items.
+    // MARK: - Text Recommendation
+
     func generateRecommendationReason(
-        items: [LocalClothingItem],
+        itemNames: [String],
         temperature: Double?,
         weatherCondition: String?
     ) async throws -> String {
-        guard isConfigured else { return "智能推荐（需配置 AI Key）" }
+        guard isConfigured else { return "今日精选搭配" }
 
-        let itemDesc = items.prefix(4).map {
-            "\($0.categoryName ?? "衣物")\($0.name.map { "（\($0)）" } ?? "")"
-        }.joined(separator: "、")
-
-        var weatherInfo = ""
+        let items = itemNames.prefix(4).joined(separator: "、")
+        var ctx = ""
         if let temp = temperature, let cond = weatherCondition {
-            weatherInfo = "当前天气：\(cond)，气温 \(Int(temp))°C。"
+            ctx = "天气：\(cond)，\(Int(temp))°C。"
         }
 
-        let prompt = """
-        \(weatherInfo)
-        用户今天选择了以下搭配：\(itemDesc)。
-        请用一句简洁、时尚的中文（20字以内）点评这套搭配，给出穿搭建议或心情语句。
-        只返回那一句话，不要任何其他内容。
-        """
+        let prompt = "\(ctx)搭配：\(items)。用一句话（20字内）点评这套搭配，语气时尚轻松。只返回那句话。"
 
-        return try await callAPI(userContent: [.text(prompt)], model: "deepseek-chat")
+        return try await call(model: selectedProvider.textModel, content: [.text(prompt)])
     }
 
-    /// Test that the API key is valid.
+    // MARK: - Test Connection
+
     func testConnection() async -> Bool {
         do {
-            let result = try await callAPI(userContent: [.text("你好，请回复'OK'")], model: "deepseek-chat")
-            return result.lowercased().contains("ok")
+            let r = try await call(model: selectedProvider.textModel, content: [.text("回复 OK")])
+            return r.lowercased().contains("ok")
         } catch {
             return false
         }
@@ -160,55 +213,60 @@ final class AIService {
 
     // MARK: - Private
 
-    private func callAPI(userContent: [ChatCompletionRequest.ContentPart], model: String) async throws -> String {
-        let url = URL(string: "\(baseURL)/v1/chat/completions")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.timeoutInterval = 30
+    private func call(model: String, content: [ContentPart]) async throws -> String {
+        let baseURL = selectedProvider.defaultBaseURL
+        guard let url = URL(string: "\(baseURL)/chat/completions") else {
+            throw AIError.networkError
+        }
 
-        let body = ChatCompletionRequest(
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.timeoutInterval = 30
+
+        let body = ChatRequest(
             model: model,
-            messages: [
-                .init(role: "user", content: userContent)
-            ],
+            messages: [ChatMessage(role: "user", content: content)],
             maxTokens: 512
         )
-        request.httpBody = try JSONEncoder().encode(body)
+        req.httpBody = try JSONEncoder().encode(body)
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: req)
         guard let http = response as? HTTPURLResponse else { throw AIError.networkError }
-        guard http.statusCode == 200 else { throw AIError.apiError("HTTP \(http.statusCode)") }
+        guard (200..<300).contains(http.statusCode) else {
+            let msg = String(data: data, encoding: .utf8) ?? "unknown"
+            throw AIError.apiError("HTTP \(http.statusCode): \(msg.prefix(200))")
+        }
 
-        let decoded = try JSONDecoder().decode(ChatCompletionResponse.self, from: data)
+        let decoded = try JSONDecoder().decode(ChatResponse.self, from: data)
         return decoded.choices.first?.message.content.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     }
 
-    private func parseClassificationResult(from json: String) -> AIClassificationResult {
-        // Strip markdown code fences if present
+    private func parseClassification(_ json: String) -> AIClassificationResult {
         var cleaned = json
-        if let start = cleaned.range(of: "{"), let end = cleaned.range(of: "}", options: .backwards) {
-            cleaned = String(cleaned[start.lowerBound...end.upperBound])
+        // Strip markdown fences
+        if cleaned.hasPrefix("```") { cleaned = cleaned.components(separatedBy: "\n").dropFirst().joined(separator: "\n") }
+        if cleaned.hasSuffix("```") { cleaned = String(cleaned.dropLast(3)) }
+        if let s = cleaned.range(of: "{"), let e = cleaned.range(of: "}", options: .backwards) {
+            cleaned = String(cleaned[s.lowerBound...e.upperBound])
         }
 
         guard
             let data = cleaned.data(using: .utf8),
             let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         else {
-            return AIClassificationResult(
-                category: "上衣", color: "#808080", styleTags: [],
-                season: "all", confidence: 0.5, description: "无法解析"
-            )
+            return AIClassificationResult(category: "上衣", colorHex: "#808080", styleTags: [],
+                                          season: "all", confidence: 0.5, description: "")
         }
 
         return AIClassificationResult(
-            category: obj["category"] as? String ?? "上衣",
-            color: obj["color_hex"] as? String ?? "#808080",
-            styleTags: obj["style_tags"] as? [String] ?? [],
-            season: obj["season"] as? String ?? "all",
-            confidence: obj["confidence"] as? Double ?? 0.7,
-            description: obj["description"] as? String ?? ""
+            category:    obj["category"]    as? String   ?? "上衣",
+            colorHex:    obj["color_hex"]   as? String   ?? "#808080",
+            styleTags:   obj["style_tags"]  as? [String] ?? [],
+            season:      obj["season"]      as? String   ?? "all",
+            confidence:  obj["confidence"]  as? Double   ?? 0.7,
+            description: obj["description"] as? String   ?? ""
         )
     }
 }
@@ -217,6 +275,7 @@ final class AIService {
 
 enum AIError: LocalizedError {
     case notConfigured
+    case visionNotSupported(AIProvider)
     case imageEncodingFailed
     case networkError
     case apiError(String)
@@ -224,7 +283,9 @@ enum AIError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notConfigured:
-            return "请先在「设置 → AI 功能」中配置 DeepSeek API Key"
+            return "请先在「设置 → AI 功能」中配置 API Key"
+        case .visionNotSupported(let p):
+            return "\(p.rawValue) 不支持图片识别，请切换到「通义千问」"
         case .imageEncodingFailed:
             return "图片处理失败"
         case .networkError:
