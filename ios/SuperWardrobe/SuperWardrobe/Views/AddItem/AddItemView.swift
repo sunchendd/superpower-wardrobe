@@ -5,7 +5,6 @@ import SwiftData
 struct AddItemView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Environment(AuthViewModel.self) private var authViewModel
     @State private var viewModel = AddItemViewModel()
     @State private var showCamera = false
     @State private var showPhotoPicker = false
@@ -13,12 +12,10 @@ struct AddItemView: View {
     @State private var imageURL = ""
     @State private var showItemEdit = false
 
-    private var isGuest: Bool { authViewModel.isGuestMode }
-
     var body: some View {
         VStack(spacing: 24) {
             if let image = viewModel.capturedImage {
-                capturedImageSection(image: image)
+                capturedSection(image: image)
             } else {
                 promptSection
             }
@@ -31,14 +28,10 @@ struct AddItemView: View {
             }
         }
         .fullScreenCover(isPresented: $showCamera) {
-            CameraView { image in
-                Task { await viewModel.classifyImage(image) }
-            }
+            CameraView { image in Task { await viewModel.classifyImage(image) } }
         }
         .sheet(isPresented: $showPhotoPicker) {
-            PhotoPickerView { image in
-                Task { await viewModel.classifyImage(image) }
-            }
+            PhotoPickerView { image in Task { await viewModel.classifyImage(image) } }
         }
         .alert("输入图片网址", isPresented: $showURLInput) {
             TextField("https://...", text: $imageURL)
@@ -46,8 +39,8 @@ struct AddItemView: View {
                 guard let url = URL(string: imageURL) else { return }
                 Task {
                     if let data = try? Data(contentsOf: url),
-                       let image = UIImage(data: data) {
-                        await viewModel.classifyImage(image)
+                       let img = UIImage(data: data) {
+                        await viewModel.classifyImage(img)
                     }
                 }
             }
@@ -55,10 +48,7 @@ struct AddItemView: View {
         }
         .sheet(isPresented: $showItemEdit) {
             NavigationStack {
-                ItemEditView(viewModel: viewModel, isGuest: isGuest) {
-                    if isGuest {
-                        Task { await viewModel.saveItemLocally(context: modelContext) }
-                    }
+                ItemEditView(viewModel: viewModel) {
                     dismiss()
                 }
             }
@@ -76,7 +66,7 @@ struct AddItemView: View {
     // MARK: - Subviews
 
     @ViewBuilder
-    private func capturedImageSection(image: UIImage) -> some View {
+    private func capturedSection(image: UIImage) -> some View {
         VStack(spacing: 16) {
             Image(uiImage: viewModel.processedImage ?? image)
                 .resizable()
@@ -93,18 +83,14 @@ struct AddItemView: View {
                         .foregroundStyle(.secondary)
                 }
             } else {
-                Button("继续编辑") {
-                    showItemEdit = true
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.indigo)
+                Button("继续编辑") { showItemEdit = true }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.indigo)
             }
 
             HStack(spacing: 16) {
-                Button("重新拍照") {
-                    viewModel.resetForm()
-                }
-                .buttonStyle(.bordered)
+                Button("重新拍照") { viewModel.resetForm() }
+                    .buttonStyle(.bordered)
 
                 if viewModel.processedImage == nil && !viewModel.isRemovingBackground {
                     Button("去除背景") {
@@ -143,31 +129,18 @@ struct AddItemView: View {
                     Text("添加新衣物")
                         .font(.title2)
                         .fontWeight(.bold)
-
                     Text("拍照或从相册选择，AI 将自动识别分类")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                 }
-
-                if isGuest {
-                    Label("游客模式 · 数据保存在本设备", systemImage: "iphone")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(Color(.secondarySystemBackground))
-                        .clipShape(Capsule())
-                }
             }
 
             Spacer()
 
             VStack(spacing: 12) {
-                Button {
-                    showCamera = true
-                } label: {
+                Button { showCamera = true } label: {
                     Label("拍照", systemImage: "camera")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
@@ -176,9 +149,7 @@ struct AddItemView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(.indigo)
 
-                Button {
-                    showPhotoPicker = true
-                } label: {
+                Button { showPhotoPicker = true } label: {
                     Label("从相册选择", systemImage: "photo.on.rectangle")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
@@ -186,9 +157,7 @@ struct AddItemView: View {
                 }
                 .buttonStyle(.bordered)
 
-                Button {
-                    showURLInput = true
-                } label: {
+                Button { showURLInput = true } label: {
                     Label("输入网址", systemImage: "link")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
@@ -203,8 +172,5 @@ struct AddItemView: View {
 }
 
 #Preview {
-    NavigationStack {
-        AddItemView()
-    }
-    .environment(AuthViewModel())
+    NavigationStack { AddItemView() }
 }

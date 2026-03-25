@@ -3,40 +3,39 @@ import SwiftData
 
 struct WardrobeView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(AuthViewModel.self) private var authViewModel
     @State private var viewModel = WardrobeViewModel()
-    @State private var showFilter = false
-    @State private var selectedItem: ClothingItem?
-    @State private var selectedLocalItem: LocalClothingItem?
+    @State private var selectedItem: LocalClothingItem?
     @State private var showOutfitCreator = false
+    @State private var showFilter = false
 
-    // Local items via SwiftData (used in guest mode)
     @Query(sort: \LocalClothingItem.createdAt, order: .reverse)
-    private var localItems: [LocalClothingItem]
+    private var allItems: [LocalClothingItem]
 
     private let columns = [
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
 
-    private var isGuest: Bool { authViewModel.isGuestMode }
-
-    // Items to display
-    private var displayedLocalItems: [LocalClothingItem] {
-        viewModel.filteredLocalItems(all: localItems)
+    private var displayItems: [LocalClothingItem] {
+        viewModel.filteredItems(from: allItems)
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            // Category filter strip
-            categoryStrip
+            // Category chips
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    categoryChip(nil, label: "全部")
+                    ForEach(viewModel.categories) { cat in
+                        categoryChip(cat, label: cat.name)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+            }
 
-            // Content
-            if viewModel.isLoading {
-                Spacer()
-                LoadingView(message: "加载衣橱中...")
-                Spacer()
-            } else if isEmpty {
+            // Grid or empty state
+            if displayItems.isEmpty {
                 Spacer()
                 EmptyStateView(
                     icon: "tshirt",
@@ -44,123 +43,55 @@ struct WardrobeView: View {
                     message: "点击 + 开始添加你的第一件衣物"
                 )
                 Spacer()
-            } else if isGuest {
-                localItemsGrid
             } else {
-                remoteItemsGrid
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(displayItems) { item in
+                            LocalClothingCard(item: item)
+                                .onTapGesture { selectedItem = item }
+                                .contextMenu {
+                                    Button(role: .destructive) {
+                                        LocalDataService.shared.deleteClothingItem(item, context: modelContext)
+                                    } label: {
+                                        Label("删除", systemImage: "trash")
+                                    }
+                                }
+                        }
+                    }
+                    .padding()
+                }
             }
         }
         .navigationTitle("我的衣橱")
         .searchable(text: $viewModel.searchText, prompt: "搜索衣物...")
         .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     showOutfitCreator = true
                 } label: {
                     Image(systemName: "person.badge.plus")
                 }
-                .help("创建搭配")
-
-                Button {
-                    showFilter = true
-                } label: {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
-                }
-                .help("筛选")
             }
-        }
-        .sheet(isPresented: $showFilter) {
-            FilterSheet()
         }
         .sheet(item: $selectedItem) { item in
-            NavigationStack {
-                ClothingItemDetailView(item: item)
-            }
-        }
-        .sheet(item: $selectedLocalItem) { item in
             LocalItemDetailView(item: item)
         }
         .sheet(isPresented: $showOutfitCreator) {
             OutfitCreatorView()
         }
-        .refreshable {
-            await viewModel.loadItems(isGuest: isGuest, context: modelContext)
-        }
-        .task {
-            await viewModel.loadItems(isGuest: isGuest, context: modelContext)
-        }
-    }
-
-    // MARK: - Subviews
-
-    private var categoryStrip: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                categoryButton(nil, label: "全部")
-                ForEach(viewModel.categories) { category in
-                    categoryButton(category, label: category.name)
-                }
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-        }
-    }
-
-    private var remoteItemsGrid: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(viewModel.filteredItems) { item in
-                    ClothingItemCard(item: item)
-                        .onTapGesture { selectedItem = item }
-                        .contextMenu {
-                            Button(role: .destructive) {
-                                Task { await viewModel.deleteItem(item) }
-                            } label: {
-                                Label("删除", systemImage: "trash")
-                            }
-                        }
-                }
-            }
-            .padding()
-        }
-    }
-
-    private var localItemsGrid: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(displayedLocalItems) { item in
-                    LocalClothingCard(item: item)
-                        .onTapGesture { selectedLocalItem = item }
-                        .contextMenu {
-                            Button(role: .destructive) {
-                                LocalDataService.shared.deleteClothingItem(item, context: modelContext)
-                            } label: {
-                                Label("删除", systemImage: "trash")
-                            }
-                        }
-                }
-            }
-            .padding()
-        }
-    }
-
-    private var isEmpty: Bool {
-        isGuest ? displayedLocalItems.isEmpty : viewModel.filteredItems.isEmpty
     }
 
     @ViewBuilder
-    private func categoryButton(_ category: Category?, label: String) -> some View {
-        let isSelected = viewModel.selectedCategory?.id == category?.id
-        Button {
-            viewModel.filterByCategory(category)
-        } label: {
+    private func categoryChip(_ category: Category?, label: String) -> some View {
+        let selected = viewModel.selectedCategory?.id == category?.id
+        Button { viewModel.filterByCategory(category) } label: {
             Text(label)
                 .font(.subheadline)
-                .fontWeight(isSelected ? .semibold : .regular)
+                .fontWeight(selected ? .semibold : .regular)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(isSelected ? Color.indigo : Color.gray.opacity(0.12))
-                .foregroundStyle(isSelected ? .white : .primary)
+                .background(selected ? Color.indigo : Color.gray.opacity(0.12))
+                .foregroundStyle(selected ? .white : .primary)
                 .clipShape(Capsule())
         }
     }
@@ -173,7 +104,6 @@ struct LocalClothingCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Image
             Group {
                 if let img = item.thumbnail {
                     Image(uiImage: img)
@@ -192,7 +122,6 @@ struct LocalClothingCard: View {
             .aspectRatio(1, contentMode: .fill)
             .clipShape(RoundedRectangle(cornerRadius: 12))
 
-            // Info
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.name ?? item.categoryName ?? "衣物")
                     .font(.subheadline)
@@ -219,7 +148,7 @@ struct LocalClothingCard: View {
     }
 }
 
-// MARK: - Local Item Detail View
+// MARK: - Local Item Detail
 
 struct LocalItemDetailView: View {
     @Environment(\.dismiss) private var dismiss
@@ -240,9 +169,9 @@ struct LocalItemDetailView: View {
                             .padding(.horizontal)
                     } else {
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(Color(hex: item.colorHex).opacity(0.2))
+                            .fill(Color(hex: item.colorHex).opacity(0.15))
                             .frame(maxWidth: .infinity)
-                            .aspectRatio(1, contentMode: .fit)
+                            .aspectRatio(1.3, contentMode: .fit)
                             .overlay {
                                 Image(systemName: item.categoryIcon ?? "tshirt")
                                     .font(.system(size: 60))
@@ -251,7 +180,6 @@ struct LocalItemDetailView: View {
                             .padding(.horizontal)
                     }
 
-                    // Details
                     VStack(alignment: .leading, spacing: 16) {
                         if let name = item.name {
                             Text(name)
@@ -262,7 +190,6 @@ struct LocalItemDetailView: View {
                         if let brand = item.brand {
                             LabeledContent("品牌", value: brand)
                         }
-
                         if let category = item.categoryName {
                             LabeledContent("分类", value: category)
                         }
@@ -273,8 +200,7 @@ struct LocalItemDetailView: View {
                                     .fill(Color(hex: item.colorHex))
                                     .frame(width: 16, height: 16)
                                     .overlay(Circle().stroke(.secondary.opacity(0.3), lineWidth: 1))
-                                Text(item.colorHex)
-                                    .foregroundStyle(.secondary)
+                                Text(item.colorHex).foregroundStyle(.secondary)
                             }
                         }
 
@@ -318,8 +244,5 @@ struct LocalItemDetailView: View {
 }
 
 #Preview {
-    NavigationStack {
-        WardrobeView()
-    }
-    .environment(AuthViewModel())
+    NavigationStack { WardrobeView() }
 }

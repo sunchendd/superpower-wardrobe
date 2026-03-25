@@ -3,17 +3,17 @@ import SwiftData
 
 @main
 struct SuperWardrobeApp: App {
-    @State private var authViewModel = AuthViewModel()
+    @State private var purchaseService = PurchaseService.shared
 
     var body: some Scene {
         WindowGroup {
             Group {
-                if authViewModel.isAuthenticated {
+                if purchaseService.isPurchased {
                     ContentView()
-                        .environment(authViewModel)
+                        .environment(purchaseService)
                 } else {
-                    AuthView(viewModel: authViewModel)
-                        .environment(authViewModel)
+                    PaywallView()
+                        .environment(purchaseService)
                 }
             }
             .modelContainer(for: [
@@ -21,10 +21,8 @@ struct SuperWardrobeApp: App {
                 LocalOutfitDiary.self,
                 LocalTravelPlan.self,
             ])
-            .animation(.easeInOut(duration: 0.3), value: authViewModel.isAuthenticated)
+            .animation(.easeInOut(duration: 0.4), value: purchaseService.isPurchased)
             .task {
-                await authViewModel.checkAuthState()
-                // Request location permission on launch
                 LocationService.shared.requestPermission()
             }
         }

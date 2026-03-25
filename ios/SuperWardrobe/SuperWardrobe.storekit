@@ -1,0 +1,48 @@
+{
+  "identifier" : "SuperWardrobeStoreKit",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "0.99",
+      "familySharable" : false,
+      "internalID" : "com.superwardrobe.fullaccess",
+      "localizations" : [
+        {
+          "description" : "解锁超级衣橱全部功能，包括智能衣橱管理、每日穿搭推荐、统计分析和旅行计划。买断制，永久有效。",
+          "displayName" : "超级衣橱 · 完整版",
+          "locale" : "zh_Hans_CN"
+        },
+        {
+          "description" : "Unlock all SuperWardrobe features including smart wardrobe management, daily outfit recommendations, statistics, and travel planning. One-time purchase.",
+          "displayName" : "SuperWardrobe Full Access",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.superwardrobe.fullaccess",
+      "referenceName" : "SuperWardrobe Full Access",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "zh_Hans_CN",
+    "_storefront" : "CHN",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      }
+    ]
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}

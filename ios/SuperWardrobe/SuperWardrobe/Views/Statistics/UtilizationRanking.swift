@@ -1,5 +1,4 @@
 import SwiftUI
-import Kingfisher
 
 struct UtilizationRanking: View {
     let items: [UtilizationItem]
@@ -29,19 +28,14 @@ struct UtilizationRanking: View {
                     Spacer()
 
                     HStack(spacing: 4) {
-                        Image(systemName: "repeat")
-                            .font(.caption2)
-                        Text("\(item.wearCount)次")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
+                        Image(systemName: "repeat").font(.caption2)
+                        Text("\(item.wearCount)次").font(.subheadline).fontWeight(.medium)
                     }
                     .foregroundStyle(.secondary)
                 }
                 .padding(.vertical, 10)
 
-                if index < items.count - 1 {
-                    Divider()
-                }
+                if index < items.count - 1 { Divider() }
             }
         }
         .padding()
@@ -50,13 +44,7 @@ struct UtilizationRanking: View {
 
     @ViewBuilder
     private func thumbnailView(_ item: UtilizationItem) -> some View {
-        if let urlString = item.imageUrl, let url = URL(string: urlString) {
-            KFImage(url)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 44, height: 44)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-        } else if let data = item.imageData, let uiImage = UIImage(data: data) {
+        if let data = item.imageData, let uiImage = UIImage(data: data) {
             Image(uiImage: uiImage)
                 .resizable()
                 .scaledToFill()
@@ -67,9 +55,7 @@ struct UtilizationRanking: View {
                 .fill(.gray.opacity(0.1))
                 .frame(width: 44, height: 44)
                 .overlay {
-                    Image(systemName: "tshirt")
-                        .font(.caption)
-                        .foregroundStyle(.gray)
+                    Image(systemName: "tshirt").font(.caption).foregroundStyle(.gray)
                 }
         }
     }
@@ -86,9 +72,8 @@ struct UtilizationRanking: View {
 
 #Preview {
     UtilizationRanking(items: [
-        UtilizationItem(id: UUID(), name: "黑色T恤", wearCount: 25, imageUrl: nil, imageData: nil),
-        UtilizationItem(id: UUID(), name: "牛仔裤", wearCount: 20, imageUrl: nil, imageData: nil),
-        UtilizationItem(id: UUID(), name: "白色衬衫", wearCount: 15, imageUrl: nil, imageData: nil),
+        UtilizationItem(id: UUID(), name: "黑色T恤", wearCount: 25, imageData: nil),
+        UtilizationItem(id: UUID(), name: "牛仔裤", wearCount: 20, imageData: nil),
     ])
     .padding()
 }
