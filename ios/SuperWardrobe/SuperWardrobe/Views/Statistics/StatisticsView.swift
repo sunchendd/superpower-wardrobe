@@ -1,11 +1,17 @@
 import SwiftUI
+import SwiftData
 
 struct StatisticsView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(AuthViewModel.self) private var authViewModel
     @State private var viewModel = StatisticsViewModel()
+
+    private var isGuest: Bool { authViewModel.isGuestMode }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
+                // Summary cards
                 HStack(spacing: 16) {
                     StatCard(
                         title: "总衣物",
@@ -22,6 +28,7 @@ struct StatisticsView: View {
                 }
                 .padding(.horizontal)
 
+                // Category distribution
                 if !viewModel.categoryDistribution.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("品类分布")
@@ -35,6 +42,7 @@ struct StatisticsView: View {
                     }
                 }
 
+                // Color distribution
                 if !viewModel.colorDistribution.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("颜色分布")
@@ -47,6 +55,7 @@ struct StatisticsView: View {
                     }
                 }
 
+                // Utilization ranking
                 if !viewModel.utilizationRanking.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("穿着排行")
@@ -58,20 +67,38 @@ struct StatisticsView: View {
                             .padding(.horizontal)
                     }
                 }
+
+                // Empty state
+                if viewModel.totalItems == 0 && !viewModel.isLoading {
+                    EmptyStateView(
+                        icon: "chart.pie",
+                        title: "暂无数据",
+                        message: "添加衣物后即可查看统计分析"
+                    )
+                    .padding(.top, 40)
+                }
             }
             .padding(.vertical)
         }
         .navigationTitle("衣橱统计")
         .refreshable {
-            await viewModel.loadStatistics()
+            await loadStats()
         }
         .task {
-            await viewModel.loadStatistics()
+            await loadStats()
         }
         .overlay {
             if viewModel.isLoading {
                 LoadingView(message: "统计中...")
             }
+        }
+    }
+
+    private func loadStats() async {
+        if isGuest {
+            viewModel.loadLocalStatistics(context: modelContext)
+        } else {
+            await viewModel.loadStatistics()
         }
     }
 }
@@ -106,4 +133,5 @@ struct StatCard: View {
     NavigationStack {
         StatisticsView()
     }
+    .environment(AuthViewModel())
 }

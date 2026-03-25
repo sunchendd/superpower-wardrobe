@@ -1,8 +1,11 @@
 import SwiftUI
 import PhotosUI
+import SwiftData
 
 struct AddItemView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @Environment(AuthViewModel.self) private var authViewModel
     @State private var viewModel = AddItemViewModel()
     @State private var showCamera = false
     @State private var showPhotoPicker = false
@@ -10,107 +13,14 @@ struct AddItemView: View {
     @State private var imageURL = ""
     @State private var showItemEdit = false
 
+    private var isGuest: Bool { authViewModel.isGuestMode }
+
     var body: some View {
         VStack(spacing: 24) {
             if let image = viewModel.capturedImage {
-                VStack(spacing: 16) {
-                    Image(uiImage: viewModel.processedImage ?? image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 300)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .shadow(radius: 8)
-
-                    if viewModel.isClassifying {
-                        HStack(spacing: 8) {
-                            ProgressView()
-                            Text("AI 识别中...")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                    } else if viewModel.classificationResult != nil {
-                        Button("继续编辑") {
-                            showItemEdit = true
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(.indigo)
-                    }
-
-                    HStack(spacing: 16) {
-                        Button("重新拍照") {
-                            viewModel.resetForm()
-                        }
-                        .buttonStyle(.bordered)
-
-                        if viewModel.processedImage == nil && !viewModel.isRemovingBackground {
-                            Button("去除背景") {
-                                Task { await viewModel.removeBackground(image) }
-                            }
-                            .buttonStyle(.bordered)
-                        }
-
-                        if viewModel.isRemovingBackground {
-                            ProgressView()
-                                .padding(.horizontal)
-                        }
-                    }
-                }
-                .padding()
+                capturedImageSection(image: image)
             } else {
-                Spacer()
-
-                VStack(spacing: 32) {
-                    Image(systemName: "camera.viewfinder")
-                        .font(.system(size: 72))
-                        .foregroundStyle(.indigo.opacity(0.6))
-
-                    Text("添加新衣物")
-                        .font(.title2)
-                        .fontWeight(.bold)
-
-                    Text("拍照或从相册选择，AI 将自动识别分类")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-                }
-
-                Spacer()
-
-                VStack(spacing: 12) {
-                    Button {
-                        showCamera = true
-                    } label: {
-                        Label("拍照", systemImage: "camera")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.indigo)
-
-                    Button {
-                        showPhotoPicker = true
-                    } label: {
-                        Label("从相册选择", systemImage: "photo.on.rectangle")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                    }
-                    .buttonStyle(.bordered)
-
-                    Button {
-                        showURLInput = true
-                    } label: {
-                        Label("输入网址", systemImage: "link")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                    }
-                    .buttonStyle(.bordered)
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 20)
+                promptSection
             }
         }
         .navigationTitle("添加衣物")
@@ -141,11 +51,14 @@ struct AddItemView: View {
                     }
                 }
             }
-            Button("取消", role: .cancel) { }
+            Button("取消", role: .cancel) {}
         }
         .sheet(isPresented: $showItemEdit) {
             NavigationStack {
-                ItemEditView(viewModel: viewModel) {
+                ItemEditView(viewModel: viewModel, isGuest: isGuest) {
+                    if isGuest {
+                        Task { await viewModel.saveItemLocally(context: modelContext) }
+                    }
                     dismiss()
                 }
             }
@@ -159,10 +72,139 @@ struct AddItemView: View {
             Text(viewModel.errorMessage ?? "")
         }
     }
+
+    // MARK: - Subviews
+
+    @ViewBuilder
+    private func capturedImageSection(image: UIImage) -> some View {
+        VStack(spacing: 16) {
+            Image(uiImage: viewModel.processedImage ?? image)
+                .resizable()
+                .scaledToFit()
+                .frame(maxHeight: 300)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .shadow(radius: 8)
+
+            if viewModel.isClassifying {
+                HStack(spacing: 8) {
+                    ProgressView()
+                    Text("AI 识别中...")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                Button("继续编辑") {
+                    showItemEdit = true
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.indigo)
+            }
+
+            HStack(spacing: 16) {
+                Button("重新拍照") {
+                    viewModel.resetForm()
+                }
+                .buttonStyle(.bordered)
+
+                if viewModel.processedImage == nil && !viewModel.isRemovingBackground {
+                    Button("去除背景") {
+                        Task { await viewModel.removeBackground(image) }
+                    }
+                    .buttonStyle(.bordered)
+                }
+
+                if viewModel.isRemovingBackground {
+                    ProgressView().padding(.horizontal)
+                }
+            }
+        }
+        .padding()
+    }
+
+    private var promptSection: some View {
+        VStack {
+            Spacer()
+
+            VStack(spacing: 24) {
+                ZStack {
+                    Circle()
+                        .fill(LinearGradient(
+                            colors: [.indigo.opacity(0.15), .purple.opacity(0.1)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ))
+                        .frame(width: 120, height: 120)
+                    Image(systemName: "camera.viewfinder")
+                        .font(.system(size: 52))
+                        .foregroundStyle(.indigo.opacity(0.7))
+                }
+
+                VStack(spacing: 8) {
+                    Text("添加新衣物")
+                        .font(.title2)
+                        .fontWeight(.bold)
+
+                    Text("拍照或从相册选择，AI 将自动识别分类")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
+                }
+
+                if isGuest {
+                    Label("游客模式 · 数据保存在本设备", systemImage: "iphone")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color(.secondarySystemBackground))
+                        .clipShape(Capsule())
+                }
+            }
+
+            Spacer()
+
+            VStack(spacing: 12) {
+                Button {
+                    showCamera = true
+                } label: {
+                    Label("拍照", systemImage: "camera")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.indigo)
+
+                Button {
+                    showPhotoPicker = true
+                } label: {
+                    Label("从相册选择", systemImage: "photo.on.rectangle")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                }
+                .buttonStyle(.bordered)
+
+                Button {
+                    showURLInput = true
+                } label: {
+                    Label("输入网址", systemImage: "link")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 20)
+        }
+    }
 }
 
 #Preview {
     NavigationStack {
         AddItemView()
     }
+    .environment(AuthViewModel())
 }

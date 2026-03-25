@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 struct CategoryStat: Identifiable {
     let id = UUID()
@@ -18,6 +19,7 @@ struct UtilizationItem: Identifiable {
     let name: String
     let wearCount: Int
     let imageUrl: String?
+    let imageData: Data? // for local items
 }
 
 @Observable
@@ -32,6 +34,13 @@ final class StatisticsViewModel {
 
     private let service = SupabaseService.shared
 
+    private let chartColors = [
+        "#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4",
+        "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F"
+    ]
+
+    // MARK: - Remote (Supabase)
+
     func loadStatistics() async {
         guard let userId = await service.currentUserId else { return }
         isLoading = true
@@ -40,31 +49,87 @@ final class StatisticsViewModel {
         do {
             let items = try await service.fetchClothingItems(userId: userId)
             let categories = try await service.fetchCategories()
-
-            totalItems = items.count
-            totalSpending = items.compactMap(\.purchasePrice).reduce(0, +)
-
-            let categoryMap = Dictionary(grouping: items) { $0.categoryId }
-            let chartColors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F"]
-            categoryDistribution = categories.enumerated().map { index, cat in
-                CategoryStat(
-                    name: cat.name,
-                    count: categoryMap[cat.id]?.count ?? 0,
-                    color: chartColors[index % chartColors.count]
-                )
-            }.filter { $0.count > 0 }
-
-            let colorMap = Dictionary(grouping: items) { $0.color }
-            colorDistribution = colorMap.map { color, group in
-                ColorStat(color: color, count: group.count)
-            }.sorted { $0.count > $1.count }
-
-            utilizationRanking = items
-                .sorted { $0.wearCount > $1.wearCount }
-                .prefix(20)
-                .map { UtilizationItem(id: $0.id, name: $0.name ?? "未命名", wearCount: $0.wearCount, imageUrl: $0.imageUrl) }
+            applyRemoteStats(items: items, categories: categories)
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    // MARK: - Local (SwiftData / guest mode)
+
+    func loadLocalStatistics(context: ModelContext) {
+        isLoading = true
+        defer { isLoading = false }
+
+        let items = LocalDataService.shared.fetchClothingItems(context: context)
+        applyLocalStats(items: items)
+    }
+
+    // MARK: - Private
+
+    private func applyRemoteStats(items: [ClothingItem], categories: [Category]) {
+        totalItems = items.count
+        totalSpending = items.compactMap(\.purchasePrice).reduce(0, +)
+
+        let categoryMap = Dictionary(grouping: items) { $0.categoryId }
+        categoryDistribution = categories.enumerated().compactMap { index, cat in
+            let count = categoryMap[cat.id]?.count ?? 0
+            guard count > 0 else { return nil }
+            return CategoryStat(
+                name: cat.name,
+                count: count,
+                color: chartColors[index % chartColors.count]
+            )
+        }
+
+        let colorMap = Dictionary(grouping: items) { $0.color }
+        colorDistribution = colorMap.map { color, group in
+            ColorStat(color: color, count: group.count)
+        }.sorted { $0.count > $1.count }
+
+        utilizationRanking = items
+            .sorted { $0.wearCount > $1.wearCount }
+            .prefix(20)
+            .map {
+                UtilizationItem(
+                    id: $0.id,
+                    name: $0.name ?? "未命名",
+                    wearCount: $0.wearCount,
+                    imageUrl: $0.imageUrl,
+                    imageData: nil
+                )
+            }
+    }
+
+    private func applyLocalStats(items: [LocalClothingItem]) {
+        totalItems = items.count
+        totalSpending = items.compactMap(\.purchasePrice).reduce(0, +)
+
+        let categoryMap = Dictionary(grouping: items) { $0.categoryName ?? "其他" }
+        categoryDistribution = categoryMap.enumerated().map { index, pair in
+            CategoryStat(
+                name: pair.key,
+                count: pair.value.count,
+                color: chartColors[index % chartColors.count]
+            )
+        }.sorted { $0.count > $1.count }
+
+        let colorMap = Dictionary(grouping: items) { $0.colorHex }
+        colorDistribution = colorMap.map { color, group in
+            ColorStat(color: color, count: group.count)
+        }.sorted { $0.count > $1.count }
+
+        utilizationRanking = items
+            .sorted { $0.wearCount > $1.wearCount }
+            .prefix(20)
+            .map {
+                UtilizationItem(
+                    id: $0.id,
+                    name: $0.name ?? $0.categoryName ?? "未命名",
+                    wearCount: $0.wearCount,
+                    imageUrl: nil,
+                    imageData: $0.imageData
+                )
+            }
     }
 }

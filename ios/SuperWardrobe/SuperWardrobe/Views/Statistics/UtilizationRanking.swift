@@ -8,6 +8,7 @@ struct UtilizationRanking: View {
         VStack(spacing: 0) {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                 HStack(spacing: 12) {
+                    // Rank badge
                     ZStack {
                         Circle()
                             .fill(rankColor(index))
@@ -18,22 +19,8 @@ struct UtilizationRanking: View {
                             .foregroundStyle(.white)
                     }
 
-                    if let urlString = item.imageUrl, let url = URL(string: urlString) {
-                        KFImage(url)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 44, height: 44)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    } else {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(.gray.opacity(0.1))
-                            .frame(width: 44, height: 44)
-                            .overlay {
-                                Image(systemName: "tshirt")
-                                    .font(.caption)
-                                    .foregroundStyle(.gray)
-                            }
-                    }
+                    // Thumbnail
+                    thumbnailView(item)
 
                     Text(item.name)
                         .font(.subheadline)
@@ -42,7 +29,7 @@ struct UtilizationRanking: View {
                     Spacer()
 
                     HStack(spacing: 4) {
-                        Image(systemName: "arrow.counterclockwise")
+                        Image(systemName: "repeat")
                             .font(.caption2)
                         Text("\(item.wearCount)次")
                             .font(.subheadline)
@@ -61,10 +48,36 @@ struct UtilizationRanking: View {
         .cardStyle()
     }
 
+    @ViewBuilder
+    private func thumbnailView(_ item: UtilizationItem) -> some View {
+        if let urlString = item.imageUrl, let url = URL(string: urlString) {
+            KFImage(url)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 44, height: 44)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+        } else if let data = item.imageData, let uiImage = UIImage(data: data) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 44, height: 44)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+        } else {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(.gray.opacity(0.1))
+                .frame(width: 44, height: 44)
+                .overlay {
+                    Image(systemName: "tshirt")
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                }
+        }
+    }
+
     private func rankColor(_ index: Int) -> Color {
         switch index {
         case 0: return .yellow
-        case 1: return .gray
+        case 1: return Color(hex: "#C0C0C0")
         case 2: return .orange
         default: return .indigo.opacity(0.5)
         }
@@ -73,9 +86,9 @@ struct UtilizationRanking: View {
 
 #Preview {
     UtilizationRanking(items: [
-        UtilizationItem(id: UUID(), name: "黑色T恤", wearCount: 25, imageUrl: nil),
-        UtilizationItem(id: UUID(), name: "牛仔裤", wearCount: 20, imageUrl: nil),
-        UtilizationItem(id: UUID(), name: "白色衬衫", wearCount: 15, imageUrl: nil),
+        UtilizationItem(id: UUID(), name: "黑色T恤", wearCount: 25, imageUrl: nil, imageData: nil),
+        UtilizationItem(id: UUID(), name: "牛仔裤", wearCount: 20, imageUrl: nil, imageData: nil),
+        UtilizationItem(id: UUID(), name: "白色衬衫", wearCount: 15, imageUrl: nil, imageData: nil),
     ])
     .padding()
 }

@@ -1,12 +1,14 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(AuthViewModel.self) private var authViewModel
     @State private var selectedTab = 0
     @State private var showAddItem = false
     @State private var previousTab = 0
 
     var body: some View {
         TabView(selection: $selectedTab) {
+            // 1. Daily Recommendations
             NavigationStack {
                 RecommendationView()
             }
@@ -15,6 +17,7 @@ struct ContentView: View {
             }
             .tag(0)
 
+            // 2. Wardrobe
             NavigationStack {
                 WardrobeView()
             }
@@ -23,12 +26,14 @@ struct ContentView: View {
             }
             .tag(1)
 
+            // 3. Add (center button — triggers sheet)
             Color.clear
                 .tabItem {
                     Label("添加", systemImage: "plus.circle.fill")
                 }
                 .tag(2)
 
+            // 4. Statistics
             NavigationStack {
                 StatisticsView()
             }
@@ -37,6 +42,7 @@ struct ContentView: View {
             }
             .tag(3)
 
+            // 5. Profile
             NavigationStack {
                 ProfileView()
             }
@@ -63,4 +69,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environment(AuthViewModel())
 }
