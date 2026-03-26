@@ -6,6 +6,7 @@ struct ItemEditView: View {
     let onSave: () -> Void
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @State private var newTag = ""
 
     private let quickTags = [
         "休闲", "商务", "运动", "日系", "欧美",
@@ -86,7 +87,6 @@ struct ItemEditView: View {
                 }
 
                 HStack {
-                    @State var newTag = ""
                     TextField("添加标签", text: $newTag)
                     Button("添加") {
                         let t = newTag.trimmingCharacters(in: .whitespaces)
