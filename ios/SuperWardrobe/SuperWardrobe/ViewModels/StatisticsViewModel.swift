@@ -53,7 +53,7 @@ final class StatisticsViewModel {
             )
         }.sorted { $0.count > $1.count }
 
-        let colorMap = Dictionary(grouping: items) { $0.colorHex }
+        let colorMap = Dictionary(grouping: items) { $0.color }
         colorDistribution = colorMap.map { color, group in
             ColorStat(color: color, count: group.count)
         }.sorted { $0.count > $1.count }

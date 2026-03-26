@@ -83,17 +83,6 @@ struct AddItemView: View {
                         .foregroundStyle(.secondary)
                 }
             } else {
-                if viewModel.visionUnavailable {
-                    HStack(spacing: 6) {
-                        Image(systemName: "info.circle")
-                            .foregroundStyle(.orange)
-                        Text("当前 AI 服务商不支持识图，请手动填写信息，或在「设置→AI功能」切换为通义千问")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(.horizontal, 8)
-                }
                 Button("继续编辑") { showItemEdit = true }
                     .buttonStyle(.borderedProminent)
                     .tint(.indigo)
@@ -102,17 +91,6 @@ struct AddItemView: View {
             HStack(spacing: 16) {
                 Button("重新拍照") { viewModel.resetForm() }
                     .buttonStyle(.bordered)
-
-                if viewModel.processedImage == nil && !viewModel.isRemovingBackground {
-                    Button("去除背景") {
-                        Task { await viewModel.removeBackground(image) }
-                    }
-                    .buttonStyle(.bordered)
-                }
-
-                if viewModel.isRemovingBackground {
-                    ProgressView().padding(.horizontal)
-                }
             }
         }
         .padding()

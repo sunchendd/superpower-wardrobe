@@ -7,7 +7,7 @@ import Foundation
 
 struct OutfitSuggestion: Identifiable {
     let id: UUID
-    let items: [LocalClothingItem]
+    let items: [ClothingItem]
     let reason: String
     let weatherTip: String?
     let score: Double // 0-1 style coherence estimate
@@ -77,7 +77,7 @@ final class LocalRecommendationEngine {
 
     /// Generate up to `count` outfit suggestions from the given wardrobe.
     func generateSuggestions(
-        from items: [LocalClothingItem],
+        from items: [ClothingItem],
         weather: WeatherData? = nil,
         count: Int = 3
     ) -> [OutfitSuggestion] {
@@ -91,9 +91,9 @@ final class LocalRecommendationEngine {
         }
 
         // Filter by preferred season if weather available
-        let filteredItems: [LocalClothingItem]
+        let filteredItems: [ClothingItem]
         if let condition {
-            filteredItems = items.filter { condition.preferredSeasons.contains($0.season) }
+            filteredItems = items.filter { condition.preferredSeasons.contains($0.season ?? "all") }
                 .nilIfEmpty ?? items
         } else {
             filteredItems = items
@@ -114,7 +114,7 @@ final class LocalRecommendationEngine {
             let outer  = (condition?.layersNeeded ?? 2) >= 2 ? outers.element(at: i) : nil
             let shoe   = shoes.element(at: i)
 
-            var outfit: [LocalClothingItem] = []
+            var outfit: [ClothingItem] = []
             if let top    { outfit.append(top) }
             if let bottom { outfit.append(bottom) }
             if let outer  { outfit.append(outer) }
@@ -177,26 +177,30 @@ final class LocalRecommendationEngine {
 
     // MARK: - Category Helpers
 
-    private func isTop(_ item: LocalClothingItem) -> Bool {
-        topCategories.contains { item.categoryName?.contains($0) == true }
+    private func isTop(_ item: ClothingItem) -> Bool {
+        let category = item.categoryName ?? item.name ?? ""
+        return topCategories.contains { category.contains($0) }
     }
 
-    private func isBottom(_ item: LocalClothingItem) -> Bool {
-        bottomCategories.contains { item.categoryName?.contains($0) == true }
+    private func isBottom(_ item: ClothingItem) -> Bool {
+        let category = item.categoryName ?? item.name ?? ""
+        return bottomCategories.contains { category.contains($0) }
     }
 
-    private func isOuter(_ item: LocalClothingItem) -> Bool {
-        outerCategories.contains { item.categoryName?.contains($0) == true }
+    private func isOuter(_ item: ClothingItem) -> Bool {
+        let category = item.categoryName ?? item.name ?? ""
+        return outerCategories.contains { category.contains($0) }
     }
 
-    private func isShoe(_ item: LocalClothingItem) -> Bool {
-        shoeCategories.contains { item.categoryName?.contains($0) == true }
+    private func isShoe(_ item: ClothingItem) -> Bool {
+        let category = item.categoryName ?? item.name ?? ""
+        return shoeCategories.contains { category.contains($0) }
     }
 
     // MARK: - Scoring
 
     /// Estimate style coherence (0-1) based on shared style tags and color harmony.
-    private func coherenceScore(for items: [LocalClothingItem]) -> Double {
+    private func coherenceScore(for items: [ClothingItem]) -> Double {
         guard items.count > 1 else { return 1.0 }
 
         // Shared tags bonus
@@ -205,7 +209,7 @@ final class LocalRecommendationEngine {
         let sharedRatio = allTags.isEmpty ? 0.5 : Double(allTags.count - uniqueTags.count) / Double(allTags.count)
 
         // Color variety bonus (diverse but not clashing)
-        let colors = items.compactMap { $0.colorHex }
+        let colors = items.compactMap { $0.color }
         let colorScore = colors.count > 3 ? 0.5 : 0.8
 
         return (sharedRatio * 0.5 + colorScore * 0.5).clamped(to: 0...1)
@@ -213,7 +217,7 @@ final class LocalRecommendationEngine {
 
     // MARK: - Reason Text
 
-    private func buildReason(items: [LocalClothingItem], condition: WeatherCondition?) -> String {
+    private func buildReason(items: [ClothingItem], condition: WeatherCondition?) -> String {
         let names = items.compactMap { $0.name ?? $0.categoryName }.prefix(3).joined(separator: " + ")
         let base = names.isEmpty ? "精心挑选的搭配" : names
         if let tip = condition?.tip {

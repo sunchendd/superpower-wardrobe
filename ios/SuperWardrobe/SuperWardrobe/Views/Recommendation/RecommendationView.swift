@@ -118,17 +118,17 @@ struct LocalOutfitCard: View {
     }
 
     @ViewBuilder
-    private func itemThumb(_ item: LocalClothingItem) -> some View {
+    private func itemThumb(_ item: ClothingItem) -> some View {
         Group {
             if let img = item.thumbnail {
                 Image(uiImage: img)
                     .resizable()
                     .scaledToFill()
             } else {
-                Color(hex: item.colorHex).opacity(0.3)
+                Color(hex: item.color).opacity(0.3)
                     .overlay {
                         Image(systemName: item.categoryIcon ?? "tshirt")
-                            .foregroundStyle(Color(hex: item.colorHex))
+                            .foregroundStyle(Color(hex: item.color))
                     }
             }
         }

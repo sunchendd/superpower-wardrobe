@@ -1,5 +1,5 @@
 import SwiftUI
-import Kingfisher
+import UIKit
 
 struct ClothingItemDetailView: View {
     let item: ClothingItem
@@ -9,8 +9,8 @@ struct ClothingItemDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                if let urlString = item.imageUrl, let url = URL(string: urlString) {
-                    KFImage(url)
+                if let data = item.imageData, let image = UIImage(data: data) {
+                    Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
                         .frame(maxHeight: 350)

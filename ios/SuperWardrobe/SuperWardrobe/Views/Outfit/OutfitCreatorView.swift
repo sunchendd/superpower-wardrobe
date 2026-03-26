@@ -12,8 +12,8 @@ struct OutfitCreatorView: View {
     @State private var isSaving = false
     @State private var showSuccess = false
 
-    @Query(sort: \LocalClothingItem.createdAt, order: .reverse)
-    private var allItems: [LocalClothingItem]
+    @Query(sort: \ClothingItem.createdAt, order: .reverse)
+    private var allItems: [ClothingItem]
 
     private let columns = [
         GridItem(.flexible(), spacing: 10),
@@ -21,7 +21,7 @@ struct OutfitCreatorView: View {
         GridItem(.flexible(), spacing: 10),
     ]
 
-    private var selectedItems: [LocalClothingItem] {
+    private var selectedItems: [ClothingItem] {
         allItems.filter { selectedIds.contains($0.id) }
     }
 
@@ -138,16 +138,16 @@ struct OutfitCreatorView: View {
     }
 
     @ViewBuilder
-    private func itemThumb(_ item: LocalClothingItem) -> some View {
+    private func itemThumb(_ item: ClothingItem) -> some View {
         if let img = item.thumbnail {
             Image(uiImage: img)
                 .resizable()
                 .scaledToFill()
         } else {
-            Color(hex: item.colorHex).opacity(0.3)
+            Color(hex: item.color).opacity(0.3)
                 .overlay {
                     Image(systemName: item.categoryIcon ?? "tshirt")
-                        .foregroundStyle(Color(hex: item.colorHex))
+                        .foregroundStyle(Color(hex: item.color))
                 }
         }
     }
@@ -158,9 +158,9 @@ struct OutfitCreatorView: View {
         guard !selectedIds.isEmpty else { return }
         isSaving = true
 
-        let entry = LocalOutfitDiary(
+        let entry = OutfitDiary(
             date: Date(),
-            notes: outfitName.isEmpty ? nil : outfitName,
+            note: outfitName.isEmpty ? nil : outfitName,
             itemIds: Array(selectedIds)
         )
         LocalDataService.shared.saveDiaryEntry(entry, context: modelContext)
@@ -178,7 +178,7 @@ struct OutfitCreatorView: View {
 // MARK: - Local Item Tile
 
 struct LocalItemTile: View {
-    let item: LocalClothingItem
+    let item: ClothingItem
     let isSelected: Bool
 
     var body: some View {
@@ -190,11 +190,11 @@ struct LocalItemTile: View {
                         .resizable()
                         .scaledToFill()
                 } else {
-                    Color(hex: item.colorHex).opacity(0.25)
+                    Color(hex: item.color).opacity(0.25)
                         .overlay {
                             Image(systemName: item.categoryIcon ?? "tshirt")
                                 .font(.title2)
-                                .foregroundStyle(Color(hex: item.colorHex))
+                                .foregroundStyle(Color(hex: item.color))
                         }
                 }
             }

@@ -4,19 +4,18 @@ import SwiftData
 struct WardrobeView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = WardrobeViewModel()
-    @State private var selectedItem: LocalClothingItem?
+    @State private var selectedItem: ClothingItem?
     @State private var showOutfitCreator = false
-    @State private var showFilter = false
 
-    @Query(sort: \LocalClothingItem.createdAt, order: .reverse)
-    private var allItems: [LocalClothingItem]
+    @Query(sort: \ClothingItem.createdAt, order: .reverse)
+    private var allItems: [ClothingItem]
 
     private let columns = [
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
 
-    private var displayItems: [LocalClothingItem] {
+    private var displayItems: [ClothingItem] {
         viewModel.filteredItems(from: allItems)
     }
 
@@ -100,7 +99,7 @@ struct WardrobeView: View {
 // MARK: - Local Clothing Card
 
 struct LocalClothingCard: View {
-    let item: LocalClothingItem
+    let item: ClothingItem
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -110,11 +109,11 @@ struct LocalClothingCard: View {
                         .resizable()
                         .scaledToFill()
                 } else {
-                    Color(hex: item.colorHex).opacity(0.2)
+                    Color(hex: item.color).opacity(0.2)
                         .overlay {
                             Image(systemName: item.categoryIcon ?? "tshirt")
                                 .font(.largeTitle)
-                                .foregroundStyle(Color(hex: item.colorHex))
+                                .foregroundStyle(Color(hex: item.color))
                         }
                 }
             }
@@ -153,7 +152,7 @@ struct LocalClothingCard: View {
 struct LocalItemDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    let item: LocalClothingItem
+    let item: ClothingItem
 
     var body: some View {
         NavigationStack {
@@ -169,13 +168,13 @@ struct LocalItemDetailView: View {
                             .padding(.horizontal)
                     } else {
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(Color(hex: item.colorHex).opacity(0.15))
+                            .fill(Color(hex: item.color).opacity(0.15))
                             .frame(maxWidth: .infinity)
                             .aspectRatio(1.3, contentMode: .fit)
                             .overlay {
                                 Image(systemName: item.categoryIcon ?? "tshirt")
                                     .font(.system(size: 60))
-                                    .foregroundStyle(Color(hex: item.colorHex))
+                                    .foregroundStyle(Color(hex: item.color))
                             }
                             .padding(.horizontal)
                     }
@@ -197,10 +196,10 @@ struct LocalItemDetailView: View {
                         LabeledContent("颜色") {
                             HStack(spacing: 6) {
                                 Circle()
-                                    .fill(Color(hex: item.colorHex))
+                                    .fill(Color(hex: item.color))
                                     .frame(width: 16, height: 16)
                                     .overlay(Circle().stroke(.secondary.opacity(0.3), lineWidth: 1))
-                                Text(item.colorHex).foregroundStyle(.secondary)
+                                Text(item.color).foregroundStyle(.secondary)
                             }
                         }
 

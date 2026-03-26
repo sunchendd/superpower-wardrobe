@@ -8,7 +8,7 @@ final class RecommendationViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
 
-    private let weatherService = WeatherService.shared
+    private let weatherService = WeatherKitService.shared
     private let locationService = LocationService.shared
     private let engine = LocalRecommendationEngine.shared
 

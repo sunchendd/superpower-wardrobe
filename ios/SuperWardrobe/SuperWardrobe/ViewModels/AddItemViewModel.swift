@@ -21,7 +21,7 @@ final class AddItemViewModel {
     /// Set to true after classification if the provider doesn't support vision
     var visionUnavailable: Bool = false
 
-    private let aiService = AIService.shared
+    private let aiService = QwenVLService.shared
 
     let seasonOptions = ["spring", "summer", "autumn", "winter", "all"]
     let seasonLabels  = ["春", "夏", "秋", "冬", "四季"]
@@ -36,12 +36,6 @@ final class AddItemViewModel {
 
         guard aiService.isConfigured else {
             // No AI configured — user fills in manually
-            return
-        }
-
-        guard aiService.selectedProvider.supportsVision else {
-            // Provider is text-only (e.g. DeepSeek)
-            visionUnavailable = true
             return
         }
 
@@ -71,15 +65,15 @@ final class AddItemViewModel {
         defer { isSaving = false }
 
         let imageData = LocalDataService.compressImage(image)
-        let local = LocalClothingItem(
+        let local = ClothingItem(
             name: itemName.isEmpty ? nil : itemName,
             imageData: imageData,
             brand: brand.isEmpty ? nil : brand,
-            colorHex: color,
+            color: color,
             season: season,
             styleTags: styleTags,
             purchasePrice: Double(purchasePrice),
-            purchaseDateRaw: Date(),
+            purchaseDate: Date(),
             categoryName: selectedCategory?.name,
             categoryIcon: selectedCategory?.icon
         )

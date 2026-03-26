@@ -10,16 +10,16 @@ final class WardrobeViewModel {
 
     // MARK: - Filtered Items
 
-    func filteredItems(from all: [LocalClothingItem]) -> [LocalClothingItem] {
+    func filteredItems(from all: [ClothingItem]) -> [ClothingItem] {
         var result = all
         if let category = selectedCategory {
-            result = result.filter { $0.categoryName == category.name }
+            result = result.filter { ($0.categoryName ?? "") == category.name }
         }
         if !searchText.isEmpty {
             result = result.filter { item in
                 (item.name?.localizedCaseInsensitiveContains(searchText) ?? false) ||
                 (item.brand?.localizedCaseInsensitiveContains(searchText) ?? false) ||
-                item.colorHex.localizedCaseInsensitiveContains(searchText) ||
+                item.color.localizedCaseInsensitiveContains(searchText) ||
                 item.styleTags.contains { $0.localizedCaseInsensitiveContains(searchText) }
             }
         }

@@ -1,5 +1,5 @@
 import SwiftUI
-import Kingfisher
+import UIKit
 
 struct ClothingItemCard: View {
     let item: ClothingItem
@@ -7,15 +7,8 @@ struct ClothingItemCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topTrailing) {
-                if let urlString = item.imageUrl, let url = URL(string: urlString) {
-                    KFImage(url)
-                        .placeholder {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(.gray.opacity(0.1))
-                                .overlay {
-                                    ProgressView()
-                                }
-                        }
+                if let data = item.imageData, let image = UIImage(data: data) {
+                    Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
                         .frame(height: 180)

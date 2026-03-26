@@ -4,11 +4,11 @@ import SwiftData
 /// App settings tab in the local-only build.
 struct SettingsAppView: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var aiService = AIService.shared
+    @State private var aiService = QwenVLService.shared
     @State private var showClearAlert = false
 
-    @Query private var allItems: [LocalClothingItem]
-    @Query private var allDiaries: [LocalOutfitDiary]
+    @Query private var allItems: [ClothingItem]
+    @Query private var allDiaries: [OutfitDiary]
 
     var body: some View {
         List {
@@ -49,16 +49,13 @@ struct SettingsAppView: View {
                 NavigationLink { OutfitDiaryView() } label: {
                     Label("穿搭日记", systemImage: "book")
                 }
-                NavigationLink { TravelPlanView() } label: {
-                    Label("旅行计划", systemImage: "airplane")
-                }
             }
 
             // MARK: - AI Settings
             Section("AI 功能") {
                 NavigationLink { AISettingsView() } label: {
                     HStack {
-                        Label("DeepSeek AI 配置", systemImage: "cpu")
+                        Label("Qwen AI 配置", systemImage: "cpu")
                         Spacer()
                         if aiService.isConfigured {
                             Label("已配置", systemImage: "checkmark.circle.fill")
@@ -103,9 +100,9 @@ struct SettingsAppView: View {
             Section("关于") {
                 LabeledContent("版本", value: appVersion)
                 HStack {
-                    Label("购买状态", systemImage: "crown.fill")
+                    Label("版本模式", systemImage: "sparkles")
                     Spacer()
-                    Label("已解锁", systemImage: "checkmark.circle.fill")
+                    Label("首测版", systemImage: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                         .font(.caption)
                 }

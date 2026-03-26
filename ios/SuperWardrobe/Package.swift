@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "SuperWardrobe",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
+        .macOS(.v13)
     ],
     products: [
         .library(
@@ -24,6 +25,11 @@ let package = Package(
                 .product(name: "Kingfisher", package: "Kingfisher"),
             ],
             path: "SuperWardrobe"
+        ),
+        .testTarget(
+            name: "SuperWardrobeTests",
+            dependencies: ["SuperWardrobe"],
+            path: "Tests/SuperWardrobeTests"
         )
     ]
 )
