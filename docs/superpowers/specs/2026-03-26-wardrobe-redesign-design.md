@@ -59,10 +59,12 @@ Remove entirely from repository:
 - `services/fashion-clip/` — Self-hosted ML service
 - `supabase/` — Migrations, Edge Functions, seed, config
 - `docker-compose.yml`, `nginx.conf`, `deploy.sh`, `Makefile`
-- iOS: `SupabaseService.swift`, `FashionCLIPService.swift`
-- iOS: `PurchaseService.swift`, `PaywallView` (no IAP needed)
-- iOS: All Codable network models (`ClothingItem.swift`, `Outfit.swift`, `DailyRecommendation.swift`, `PurchaseRecommendation.swift`, `UserProfile.swift`, `OutfitDiary.swift`, `TravelPlan.swift`, `Category.swift`)
+- iOS Services: `SupabaseService.swift`, `FashionCLIPService.swift`, `AIService.swift`, `WeatherService.swift`, `PurchaseService.swift`
+- iOS ViewModels: `AuthViewModel.swift` (replaced by AppleAuthService), `ProfileViewModel.swift` (merged into SettingsView)
+- iOS Views: `Views/Paywall/`, `Views/Auth/` (old email/password auth), purchase-related views
+- iOS Models (all Codable network models): `ClothingItem.swift`, `Outfit.swift`, `DailyRecommendation.swift`, `PurchaseRecommendation.swift`, `UserProfile.swift`, `OutfitDiary.swift`, `TravelPlan.swift`, `Category.swift`
 - Supabase SDK dependency from Xcode project
+- Any SPM/CocoaPods references to Supabase
 
 ### 2.4 Dependency Graph
 
@@ -71,8 +73,7 @@ SuperWardrobeApp
  ├─ AppleAuthService ─── Sign in with Apple (identity)
  └─ SwiftData Container
      ├─ ClothingItem (unified @Model)
-     ├─ OutfitDiary
-     └─ TravelPlan
+     └─ OutfitDiary
 
 ContentView (5 tabs)
  ├─ RecommendationView
@@ -111,13 +112,12 @@ ContentView (5 tabs)
 class ClothingItem {
     @Attribute(.unique) var id: UUID
     var name: String              // "白色圆领T恤"
-    var imageData: Data?          // 本地存储照片
+    @Attribute(.externalStorage) var imageData: Data?  // externally stored, auto-managed by SwiftData
     var category: String          // "上衣" / "裤子" / "外套" / "鞋子" / "配饰" / "裙子"
-    var categoryIcon: String      // SF Symbol name
     var brand: String?
     var colorHex: String?         // "#FFFFFF"
     var colorName: String?        // "白色"
-    var season: String            // "spring" / "summer" / "autumn" / "winter" / "all"
+    var seasons: [String]         // ["spring", "autumn"] — supports multi-season items
     var styleTags: [String]       // ["休闲", "通勤"]
     var material: String?         // "棉" / "聚酯纤维"
     var purchasePrice: Double?
@@ -132,25 +132,35 @@ class ClothingItem {
 class OutfitDiary {
     @Attribute(.unique) var id: UUID
     var date: Date
-    var photoData: Data?
+    @Attribute(.externalStorage) var photoData: Data?
     var mood: String?             // "😊" / "😐" / "🥶"
     var occasion: String?         // "通勤" / "约会" / "运动"
     var weatherDesc: String?
     var temperature: Double?
     var notes: String?
-    var itemIds: [UUID]
+    @Relationship var items: [ClothingItem]  // proper relationship, not UUID array
     var createdAt: Date = Date()
 }
+```
 
-@Model
-class TravelPlan {
-    @Attribute(.unique) var id: UUID
-    var destination: String
-    var startDate: Date
-    var endDate: Date
-    var notes: String?
-    var packedItemIds: [UUID]
-    var createdAt: Date = Date()
+**Note:** `TravelPlan` removed from v1 scope. Can be added in future version. Reduces complexity for initial release.
+
+**Image Storage Strategy:**
+- All `imageData` fields use `@Attribute(.externalStorage)` — SwiftData manages file storage automatically
+- On save, compress to JPEG 0.7 quality, max 1024px dimension
+- Generate 200px thumbnail stored inline for grid views (`thumbnailData: Data?`)
+
+**Category Icon:**
+- Derived from `category` via computed property, not stored per item:
+```swift
+extension ClothingItem {
+    var categoryIcon: String {
+        switch category {
+        case "上衣": return "tshirt"
+        case "裤子": return "figure.walk"
+        // ...
+        }
+    }
 }
 ```
 
@@ -161,8 +171,9 @@ class TravelPlan {
 @AppStorage("appleUserId")    var appleUserId: String = ""
 @AppStorage("displayName")    var displayName: String = ""
 
-// AI config
-@AppStorage("qwenApiKey")     var qwenApiKey: String = ""
+// AI config — API Key stored in Keychain (not UserDefaults) for security
+// Use KeychainService wrapper: KeychainService.save("qwenApiKey", value)
+// @AppStorage only stores non-sensitive config:
 @AppStorage("qwenBaseUrl")    var qwenBaseUrl: String = "https://dashscope.aliyuncs.com"
 
 // Theme
@@ -192,9 +203,16 @@ class TravelPlan {
 1. Open app → Recommendation tab (home)
 2. See weather card (WeatherKit + CoreLocation)
 3. See outfit suggestion (LocalRecommendationEngine, optionally AI-enhanced)
-4. Tap "就穿这套" → increments wearCount + records lastWornDate
+4. Tap "就穿这套" → increments wearCount + records lastWornDate + auto-creates OutfitDiary entry
 5. Or tap "换一套" → next suggestion
 6. Close app
+
+### 4.5 Outfit History
+
+- Tapping "就穿这套" auto-creates an `OutfitDiary` entry with date, weather, and selected items
+- Outfit history accessible from **统计 tab** (section: "穿搭记录")
+- Calendar view shows which days have outfit records
+- No manual diary editing needed — keeps it effortless for efficiency users
 
 ### 4.3 Add Clothing
 
@@ -218,8 +236,8 @@ class TravelPlan {
 |-----|------|-------------------|---------|
 | 1 | 推荐 | `eye` | Weather + daily outfit suggestion |
 | 2 | 衣橱 | `cabinet` | Grid view with category/season filters |
-| 3 | ➕ 添加 | `plus` (floating circle) | Modal sheet, center prominent button |
-| 4 | 统计 | `chart.bar` | Category distribution, utilization, idle items |
+| 3 | ➕ 添加 | `plus` (custom center button) | Modal `.sheet()`, not a real tab — requires custom tab bar |
+| 4 | 统计 | `chart.bar` | Category distribution, utilization, idle items, outfit history |
 | 5 | 设置 | `gearshape` | API key, theme, profile, about |
 
 ---
@@ -287,6 +305,8 @@ final class AppleAuthService {
 - Uses `ASAuthorizationAppleIDProvider`
 - Stores `appleUserId` in @AppStorage
 - Identity only, no cloud sync
+- Handles credential revocation: observe `ASAuthorizationAppleIDProvider.credentialRevokedNotification`
+- `checkCredentialState()` called on app launch — if revoked, clear local identity gracefully
 
 ### 6.2 QwenVLService
 
@@ -305,7 +325,7 @@ struct ClassificationResult {
     var colorName: String
     var material: String?
     var styleTags: [String]
-    var season: String
+    var seasons: [String]
     var confidence: Double
 }
 ```
@@ -360,3 +380,43 @@ struct WeatherData {
 4. **AI 是增强不是必须** — Every feature works without API key
 5. **Apple 原生优先** — SF Symbols, WeatherKit, Sign in with Apple, SwiftData
 6. **零第三方依赖** — No Supabase, no pods, no SPM packages for core features
+
+---
+
+## 9. Error Handling & Edge Cases
+
+| Scenario | Behavior |
+|----------|----------|
+| Location permission denied | Show weather as "unavailable", still recommend based on season/date only |
+| WeatherKit API fails | Cache last weather, show "天气信息暂不可用" banner, recommendations still work |
+| Qwen VL API error / rate limit | Show error toast, fall back to manual input mode |
+| No API key configured | AI buttons show "配置 API Key" badge, all manual flows work normally |
+| Zero clothing items | Empty state: "拍一件衣服开始吧" with camera button |
+| Zero items for a season | Recommendation shows "当季衣物不足，试试添加更多" |
+| Apple credential revoked | Clear identity, app continues working (data is local) |
+| Image too large | Auto-compress to JPEG 0.7, max 1024px before storage |
+
+**Concurrency model:** All ViewModels and services that touch SwiftData are `@MainActor`. Network calls dispatched via `async/await`.
+
+---
+
+## 10. Statistics Tab Detail
+
+| Section | Content | Data Source |
+|---------|---------|-------------|
+| Overview cards | Total items, utilization rate, average price | ClothingItem aggregate |
+| Category distribution | Horizontal bar chart (上衣/裤子/外套/鞋子/配饰) | ClothingItem.category |
+| Idle items alert | Items not worn for 30+ days | ClothingItem.lastWornDate |
+| Outfit history | Calendar view with outfit records | OutfitDiary entries |
+| Color distribution | Color dots chart | ClothingItem.colorHex |
+
+**Idle threshold:** 30 days = warning (amber), 60 days = alert (red).
+
+---
+
+## 11. Implementation Notes
+
+- **Custom tab bar** required: SwiftUI native `TabView` doesn't support center floating button. Build custom `CustomTabBar` view with `ZStack` overlay.
+- **WeatherKit** requires paid Apple Developer Program ($99/year) — prerequisite for development.
+- **SwiftData migration:** Use `VersionedSchema` from v1 to support future schema changes.
+- **Keychain wrapper:** Build lightweight `KeychainService` (Security framework) for API key storage. ~30 lines of code.
