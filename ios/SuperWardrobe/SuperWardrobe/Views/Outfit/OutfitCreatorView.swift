@@ -62,11 +62,11 @@ struct OutfitCreatorView: View {
                                     isSelected: selectedIds.contains(item.id)
                                 )
                                 .onTapGesture {
-                                    withAnimation(.spring(response: 0.25)) {
+                                    withAnimation {
                                         if selectedIds.contains(item.id) {
-                                            selectedIds.remove(item.id)
+                                            _ = selectedIds.remove(item.id)
                                         } else {
-                                            selectedIds.insert(item.id)
+                                            _ = selectedIds.insert(item.id)
                                         }
                                     }
                                 }
@@ -120,8 +120,8 @@ struct OutfitCreatorView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
                             Button {
-                                withAnimation(.spring(response: 0.25)) {
-                                    selectedIds.remove(item.id)
+                                withAnimation {
+                                    _ = selectedIds.remove(item.id)
                                 }
                             } label: {
                                 Image(systemName: "xmark.circle.fill")

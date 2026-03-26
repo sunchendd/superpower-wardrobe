@@ -1,50 +1,40 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedTab = 0
+    @AppStorage("has_seen_onboarding") private var hasSeenOnboarding = false
+    @StateObject private var themeManager = ThemeManager.shared
+    @State private var selectedTab: SuperWardrobeShellTab = .recommendation
     @State private var showAddItem = false
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            NavigationStack {
-                RecommendationView()
-            }
-            .tabItem { Label("推荐", systemImage: "sparkles") }
-            .tag(0)
+        ZStack {
+            WardrobeAppShell(
+                selection: $selectedTab,
+                onAdd: { showAddItem = true },
+                recommendation: NavigationStack { RecommendationView() },
+                wardrobe: NavigationStack { WardrobeView() },
+                statistics: NavigationStack { StatisticsView() },
+                settings: NavigationStack { SettingsAppView() }
+            )
+            .themeManager(themeManager)
 
-            NavigationStack {
-                WardrobeView()
-            }
-            .tabItem { Label("衣橱", systemImage: "tshirt") }
-            .tag(1)
-
-            // Center add button
-            Color.clear
-                .tabItem { Label("添加", systemImage: "plus.circle.fill") }
-                .tag(2)
-
-            NavigationStack {
-                StatisticsView()
-            }
-            .tabItem { Label("统计", systemImage: "chart.pie") }
-            .tag(3)
-
-            NavigationStack {
-                SettingsAppView()
-            }
-            .tabItem { Label("设置", systemImage: "gearshape") }
-            .tag(4)
-        }
-        .onChange(of: selectedTab) { old, new in
-            if new == 2 {
-                showAddItem = true
-                selectedTab = old
+            if !hasSeenOnboarding {
+                OnboardingView {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        hasSeenOnboarding = true
+                    }
+                }
+                .transition(.opacity)
+                .zIndex(2)
             }
         }
         .sheet(isPresented: $showAddItem) {
-            NavigationStack { AddItemView() }
+            NavigationStack {
+                AddItemView()
+            }
+            .themeManager(themeManager)
+            .presentationDragIndicator(.visible)
         }
-        .tint(.indigo)
     }
 }
 

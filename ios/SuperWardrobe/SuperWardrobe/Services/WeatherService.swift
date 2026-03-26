@@ -6,16 +6,65 @@ struct WeatherData: Codable {
     let icon: String
     let humidity: Int
     let windSpeed: Double
+    let windDirection: String?
     let description: String
+
+    init(
+        temperature: Double,
+        condition: String,
+        icon: String,
+        humidity: Int,
+        windSpeed: Double,
+        windDirection: String? = nil,
+        description: String
+    ) {
+        self.temperature = temperature
+        self.condition = condition
+        self.icon = icon
+        self.humidity = humidity
+        self.windSpeed = windSpeed
+        self.windDirection = windDirection
+        self.description = description
+    }
 
     enum CodingKeys: String, CodingKey {
         case temperature = "temp"
-        case condition, icon, humidity, description
+        case condition, icon, humidity, windDirection, description
         case windSpeed = "wind_speed"
     }
 
     var temperatureFormatted: String {
         String(format: "%.0f°C", temperature)
+    }
+
+    var windLevel: Int {
+        switch windSpeed {
+        case ..<0.3: return 0
+        case ..<1.6: return 1
+        case ..<3.4: return 2
+        case ..<5.5: return 3
+        case ..<8.0: return 4
+        case ..<10.8: return 5
+        case ..<13.9: return 6
+        case ..<17.2: return 7
+        case ..<20.8: return 8
+        case ..<24.5: return 9
+        case ..<28.5: return 10
+        case ..<32.7: return 11
+        default: return 12
+        }
+    }
+
+    var windSummary: String {
+        "\(windDirection ?? "东南风") \(windLevel) 级"
+    }
+
+    var umbrellaAdvice: String {
+        let lowered = condition.lowercased()
+        if lowered.contains("rain") || lowered.contains("drizzle") || lowered.contains("thunder") {
+            return "记得带伞"
+        }
+        return "不用带伞"
     }
 
     var weatherEmoji: String {
@@ -72,6 +121,7 @@ final class WeatherService {
             icon: weatherInfo?.icon ?? "01d",
             humidity: response.main.humidity,
             windSpeed: response.wind.speed,
+            windDirection: nil,
             description: weatherInfo?.description ?? ""
         )
     }

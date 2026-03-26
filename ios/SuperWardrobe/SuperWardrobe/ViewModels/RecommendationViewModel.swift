@@ -5,12 +5,39 @@ import SwiftData
 final class RecommendationViewModel {
     var suggestions: [OutfitSuggestion] = []
     var weather: WeatherData?
+    var locationName: String = "定位中"
     var isLoading: Bool = false
     var errorMessage: String?
 
-    private let weatherService = WeatherKitService.shared
-    private let locationService = LocationService.shared
-    private let engine = LocalRecommendationEngine.shared
+    private let weatherService: WeatherProviding
+    private let locationService: LocationProviding
+    private let engine: LocalRecommendationEngine
+
+    init(
+        weatherService: WeatherProviding = WeatherKitService.shared,
+        locationService: LocationProviding = LocationService.shared,
+        engine: LocalRecommendationEngine = .shared
+    ) {
+        self.weatherService = weatherService
+        self.locationService = locationService
+        self.engine = engine
+    }
+
+    var locationLine: String {
+        "\(locationName) · \(Date().weekdayString)"
+    }
+
+    var weatherSummary: String {
+        weather?.description ?? "天气获取中"
+    }
+
+    var windSummary: String {
+        weather?.windSummary ?? "风力获取中"
+    }
+
+    var umbrellaAdvice: String {
+        weather?.umbrellaAdvice ?? "天气获取中"
+    }
 
     // MARK: - Load
 
@@ -18,15 +45,18 @@ final class RecommendationViewModel {
         isLoading = true
         defer { isLoading = false }
 
-        // Fetch weather
-        if let loc = locationService.currentLocation {
-            weather = try? await weatherService.fetchWeather(
-                latitude: loc.coordinate.latitude,
-                longitude: loc.coordinate.longitude
+        do {
+            let location = try await locationService.fetchCurrentLocation()
+            locationName = try await locationService.resolveLocality(for: location) ?? "当前位置"
+            weather = try await weatherService.fetchWeather(
+                latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude
             )
+        } catch {
+            locationName = "定位失败"
+            errorMessage = nil
         }
 
-        // Generate local recommendations
         let items = LocalDataService.shared.fetchClothingItems(context: context)
         suggestions = engine.generateSuggestions(from: items, weather: weather, count: 3)
     }

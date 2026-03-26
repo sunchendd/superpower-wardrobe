@@ -1,71 +1,69 @@
 import SwiftUI
 
-/// A layout that arranges children in a left-to-right flow, wrapping to the next
-/// line when horizontal space runs out.
 struct FlowLayout<Content: View>: View {
     var spacing: CGFloat
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        _FlowLayout(spacing: spacing, content: content)
+        AnyLayout(FlowWrapLayout(spacing: spacing)) {
+            content()
+        }
     }
 }
 
-// MARK: - Layout Implementation
-
-private struct _FlowLayout<Content: View>: Layout {
+private struct FlowWrapLayout: Layout {
     var spacing: CGFloat
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let maxWidth = proposal.width ?? .infinity
-        var totalHeight: CGFloat = 0
         var currentX: CGFloat = 0
-        var currentRowHeight: CGFloat = 0
+        var currentY: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var usedWidth: CGFloat = 0
 
         for (index, subview) in subviews.enumerated() {
             let size = subview.sizeThatFits(.unspecified)
-            let needsNewRow = (currentX + size.width > maxWidth) && index > 0
+            let needsNewLine = index > 0 && currentX + size.width > maxWidth
 
-            if needsNewRow {
-                totalHeight += currentRowHeight + spacing
+            if needsNewLine {
                 currentX = 0
-                currentRowHeight = 0
+                currentY += rowHeight + spacing
+                rowHeight = 0
             }
 
-            currentRowHeight = max(currentRowHeight, size.height)
+            usedWidth = max(usedWidth, currentX + size.width)
+            rowHeight = max(rowHeight, size.height)
             currentX += size.width + spacing
         }
 
-        totalHeight += currentRowHeight
-        return CGSize(width: maxWidth, height: totalHeight)
+        return CGSize(width: usedWidth, height: currentY + rowHeight)
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         var currentX = bounds.minX
         var currentY = bounds.minY
-        var currentRowHeight: CGFloat = 0
+        var rowHeight: CGFloat = 0
 
         for (index, subview) in subviews.enumerated() {
             let size = subview.sizeThatFits(.unspecified)
-            let needsNewRow = (currentX + size.width > bounds.maxX) && index > 0
+            let needsNewLine = index > 0 && currentX + size.width > bounds.maxX
 
-            if needsNewRow {
-                currentY += currentRowHeight + spacing
+            if needsNewLine {
                 currentX = bounds.minX
-                currentRowHeight = 0
+                currentY += rowHeight + spacing
+                rowHeight = 0
             }
 
             subview.place(
                 at: CGPoint(x: currentX, y: currentY),
-                proposal: ProposedViewSize(size)
+                proposal: ProposedViewSize(width: size.width, height: size.height)
             )
-            currentRowHeight = max(currentRowHeight, size.height)
+
+            rowHeight = max(rowHeight, size.height)
             currentX += size.width + spacing
         }
     }
 }
-
-// MARK: - Preview
 
 #Preview {
     FlowLayout(spacing: 8) {

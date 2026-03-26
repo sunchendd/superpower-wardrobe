@@ -6,20 +6,28 @@ struct EmptyStateView: View {
     let message: String
     var actionTitle: String?
     var action: (() -> Void)?
+    @EnvironmentObject private var themeManager: ThemeManager
+
+    private var theme: ThemeTokens { themeManager.tokens }
 
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.system(size: 56))
-                .foregroundStyle(.indigo.opacity(0.4))
+        VStack(spacing: 18) {
+            ZStack {
+                Circle()
+                    .fill(theme.accent.opacity(theme.isDarkFixed ? 0.16 : 0.11))
+                    .frame(width: 96, height: 96)
+                Image(systemName: icon)
+                    .font(.system(size: 40, weight: .semibold))
+                    .foregroundStyle(theme.accent)
+            }
 
             Text(title)
-                .font(.title3)
-                .fontWeight(.semibold)
+                .font(.title3.weight(.bold))
+                .foregroundStyle(theme.text)
 
             Text(message)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(theme.textMuted)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
 
@@ -29,7 +37,7 @@ struct EmptyStateView: View {
                         .fontWeight(.medium)
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(.indigo)
+                .tint(theme.accent)
                 .padding(.top, 8)
             }
         }
