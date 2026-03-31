@@ -74,9 +74,20 @@ final class LocationService: NSObject, CLLocationManagerDelegate, LocationProvid
             return currentLocation
         }
 
-        return try await withCheckedThrowingContinuation { continuation in
-            locationContinuation = continuation
-            manager.requestLocation()
+        return try await withThrowingTaskGroup(of: CLLocation.self) { group in
+            group.addTask {
+                try await withCheckedThrowingContinuation { continuation in
+                    self.locationContinuation = continuation
+                    self.manager.requestLocation()
+                }
+            }
+            group.addTask {
+                try await Task.sleep(for: .seconds(10))
+                throw LocationServiceError.unavailableLocation
+            }
+            let result = try await group.next()!
+            group.cancelAll()
+            return result
         }
     }
 

@@ -48,11 +48,15 @@ struct AddItemView: View {
         .alert("输入图片网址", isPresented: $showURLInput) {
             TextField("https://...", text: $imageURL)
             Button("确定") {
-                guard let url = URL(string: imageURL) else { return }
+                let raw = imageURL.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard let url = URL(string: raw) else { return }
                 Task {
-                    if let data = try? Data(contentsOf: url),
-                       let img = UIImage(data: data) {
+                    do {
+                        // 尝试直接作为图片下载；如果失败则解析页面 og:image（支持京东/淘宝等商品链接）
+                        let img = try await Self.loadImageFromURLOrPage(url)
                         await viewModel.classifyImage(img)
+                    } catch {
+                        await MainActor.run { viewModel.errorMessage = "无法获取图片，请尝试直接复制图片链接" }
                     }
                 }
             }
@@ -332,6 +336,47 @@ struct AddItemView: View {
         }
 
         return "图片已经准备好，你可以直接进入编辑页手动填写信息。"
+    }
+}
+
+// MARK: - URL Image Loader
+
+extension AddItemView {
+    /// 先尝试直接下载图片；若返回的是 HTML 页面则解析 og:image（支持京东/淘宝短链）
+    static func loadImageFromURLOrPage(_ url: URL) async throws -> UIImage {
+        let session = URLSession.shared
+        let (data, response) = try await session.data(from: url)
+
+        // 如果是图片，直接解码
+        if let img = UIImage(data: data) { return img }
+
+        // 否则尝试解析 HTML 中的 og:image
+        guard let html = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1),
+              let imgURL = Self.extractOGImage(from: html, base: response.url ?? url)
+        else { throw URLError(.cannotDecodeContentData) }
+
+        let (imgData, _) = try await session.data(from: imgURL)
+        guard let img = UIImage(data: imgData) else { throw URLError(.cannotDecodeContentData) }
+        return img
+    }
+
+    private static func extractOGImage(from html: String, base: URL) -> URL? {
+        let patterns = [
+            #"og:image[^>]*content=["\']([^"\']+)["\']"#,
+            #"content=["\']([^"\']+)["\'][^>]*og:image"#,
+            #"itemprop=["\']image["\'][^>]*content=["\']([^"\']+)["\']"#,
+        ]
+        for pattern in patterns {
+            guard let regex = try? NSRegularExpression(pattern: pattern),
+                  let match = regex.firstMatch(in: html, range: NSRange(html.startIndex..., in: html)),
+                  match.numberOfRanges > 1,
+                  let range = Range(match.range(at: 1), in: html)
+            else { continue }
+            let urlStr = String(html[range]).trimmingCharacters(in: .whitespacesAndNewlines)
+            if urlStr.hasPrefix("http") { return URL(string: urlStr) }
+            return URL(string: urlStr, relativeTo: base)?.absoluteURL
+        }
+        return nil
     }
 }
 

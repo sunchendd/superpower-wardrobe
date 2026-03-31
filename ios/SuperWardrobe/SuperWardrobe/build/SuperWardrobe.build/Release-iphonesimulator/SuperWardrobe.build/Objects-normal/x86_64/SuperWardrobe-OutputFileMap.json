@@ -1,0 +1,236 @@
+{
+  "" : {
+    "const-values" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-primary.swiftconstvalues",
+    "dependencies" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-primary.d",
+    "diagnostics" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-primary.dia",
+    "emit-module-dependencies" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-primary-emit-module.dia",
+    "pch" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-primary.swiftdeps"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/ContentView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ContentView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ContentView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ContentView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Models/Category.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Category.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Category.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Category.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Models/ClothingItem.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ClothingItem.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ClothingItem.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ClothingItem.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Models/DailyRecommendation.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/DailyRecommendation.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/DailyRecommendation.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/DailyRecommendation.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Models/Outfit.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Outfit.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Outfit.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Outfit.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Models/OutfitDiary.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitDiary.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitDiary.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitDiary.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Models/PurchaseRecommendation.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/PurchaseRecommendation.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/PurchaseRecommendation.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/PurchaseRecommendation.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Models/TravelPlan.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/TravelPlan.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/TravelPlan.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/TravelPlan.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Models/UserProfile.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/UserProfile.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/UserProfile.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/UserProfile.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Services/FashionCLIPService.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/FashionCLIPService.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/FashionCLIPService.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/FashionCLIPService.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Services/LocationService.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/LocationService.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/LocationService.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/LocationService.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Services/SupabaseService.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SupabaseService.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SupabaseService.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SupabaseService.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Services/WeatherService.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WeatherService.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WeatherService.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WeatherService.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/SuperWardrobeApp.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobeApp.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobeApp.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobeApp.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Utils/Constants.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Constants.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Constants.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Constants.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Utils/Extensions.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Extensions.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Extensions.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/Extensions.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/ViewModels/AddItemViewModel.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/AddItemViewModel.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/AddItemViewModel.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/AddItemViewModel.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/ViewModels/ProfileViewModel.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ProfileViewModel.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ProfileViewModel.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ProfileViewModel.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/ViewModels/RecommendationViewModel.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/RecommendationViewModel.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/RecommendationViewModel.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/RecommendationViewModel.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/ViewModels/StatisticsViewModel.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/StatisticsViewModel.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/StatisticsViewModel.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/StatisticsViewModel.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/ViewModels/WardrobeViewModel.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WardrobeViewModel.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WardrobeViewModel.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WardrobeViewModel.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/AddItem/AddItemView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/AddItemView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/AddItemView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/AddItemView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/AddItem/CameraView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/CameraView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/CameraView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/CameraView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/AddItem/ItemEditView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ItemEditView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ItemEditView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ItemEditView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/AddItem/PhotoPickerView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/PhotoPickerView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/PhotoPickerView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/PhotoPickerView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Common/EmptyStateView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/EmptyStateView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/EmptyStateView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/EmptyStateView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Common/LoadingView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/LoadingView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/LoadingView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/LoadingView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Profile/OutfitCalendarView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitCalendarView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitCalendarView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitCalendarView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Profile/OutfitDiaryView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitDiaryView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitDiaryView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitDiaryView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Profile/ProfileView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ProfileView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ProfileView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ProfileView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Profile/SettingsView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SettingsView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SettingsView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SettingsView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Profile/TravelPlanView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/TravelPlanView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/TravelPlanView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/TravelPlanView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Recommendation/OutfitCard.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitCard.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitCard.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/OutfitCard.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Recommendation/PurchaseSuggestionRow.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/PurchaseSuggestionRow.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/PurchaseSuggestionRow.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/PurchaseSuggestionRow.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Recommendation/RecommendationView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/RecommendationView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/RecommendationView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/RecommendationView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Recommendation/WeatherCard.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WeatherCard.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WeatherCard.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WeatherCard.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Statistics/CategoryPieChart.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/CategoryPieChart.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/CategoryPieChart.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/CategoryPieChart.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Statistics/ColorDistributionChart.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ColorDistributionChart.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ColorDistributionChart.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ColorDistributionChart.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Statistics/StatisticsView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/StatisticsView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/StatisticsView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/StatisticsView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Statistics/UtilizationRanking.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/UtilizationRanking.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/UtilizationRanking.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/UtilizationRanking.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Wardrobe/ClothingItemCard.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ClothingItemCard.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ClothingItemCard.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ClothingItemCard.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Wardrobe/ClothingItemDetailView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ClothingItemDetailView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ClothingItemDetailView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/ClothingItemDetailView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Wardrobe/FilterSheet.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/FilterSheet.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/FilterSheet.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/FilterSheet.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Views/Wardrobe/WardrobeView.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WardrobeView.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WardrobeView.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/WardrobeView.o"
+  },
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/GeneratedAssetSymbols.o"
+  }
+}

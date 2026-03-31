@@ -186,36 +186,40 @@ struct SettingsAppView: View {
         return Button {
             themeManager.useLightPalette(palette)
         } label: {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 10) {
-                    Circle()
-                        .fill(paletteTokens.accent)
-                        .frame(width: 16, height: 16)
-                    Text(palette.displayName)
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(theme.text)
-                    Spacer()
-                }
-
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+            HStack(spacing: 8) {
+                // Color swatch strip
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .fill(
                         LinearGradient(
-                            colors: [paletteTokens.background, paletteTokens.card],
+                            colors: [paletteTokens.accent, paletteTokens.background],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(height: 56)
+                    .frame(width: 28, height: 28)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(paletteTokens.cardBorder, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .stroke(paletteTokens.cardBorder, lineWidth: 0.5)
                     )
+
+                Text(palette.displayName)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(theme.text)
+
+                Spacer()
+
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(theme.accent)
+                }
             }
-            .padding(14)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
             .background(theme.surface)
-            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .stroke(isSelected ? theme.accent : theme.cardBorder, lineWidth: isSelected ? 1.5 : 1)
             )
         }

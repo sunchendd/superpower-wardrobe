@@ -39,6 +39,16 @@ final class AppleAuthService {
         set { UserDefaults.standard.set(newValue, forKey: storedUserIdentifierKey) }
     }
 
+    var storedUserName: String? {
+        get { UserDefaults.standard.string(forKey: "apple_user_name") }
+        set { UserDefaults.standard.set(newValue, forKey: "apple_user_name") }
+    }
+
+    var storedUserEmail: String? {
+        get { UserDefaults.standard.string(forKey: "apple_user_email") }
+        set { UserDefaults.standard.set(newValue, forKey: "apple_user_email") }
+    }
+
     var isSignedIn: Bool {
         storedUserIdentifier?.isEmpty == false
     }

@@ -48,6 +48,14 @@ struct OnboardingView: View {
                         if case let .success(authResults) = result,
                            let credential = authResults.credential as? ASAuthorizationAppleIDCredential {
                             AppleAuthService.shared.storeSignedInUserIdentifier(credential.user)
+                            if let fullName = credential.fullName {
+                                let name = [fullName.familyName, fullName.givenName]
+                                    .compactMap { $0 }.joined(separator: " ")
+                                if !name.isEmpty { AppleAuthService.shared.storedUserName = name }
+                            }
+                            if let email = credential.email {
+                                AppleAuthService.shared.storedUserEmail = email
+                            }
                         }
                         onFinish()
                     }

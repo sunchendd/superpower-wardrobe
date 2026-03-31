@@ -28,15 +28,15 @@ final class RecommendationViewModel {
     }
 
     var weatherSummary: String {
-        weather?.description ?? "天气获取中"
+        isLoading ? "天气获取中" : (weather?.description ?? "暂无天气数据")
     }
 
     var windSummary: String {
-        weather?.windSummary ?? "风力获取中"
+        isLoading ? "风力获取中" : (weather?.windSummary ?? "--")
     }
 
     var umbrellaAdvice: String {
-        weather?.umbrellaAdvice ?? "天气获取中"
+        isLoading ? "获取中" : (weather?.umbrellaAdvice ?? "--")
     }
 
     // MARK: - Load
@@ -47,14 +47,15 @@ final class RecommendationViewModel {
 
         do {
             let location = try await locationService.fetchCurrentLocation()
-            locationName = try await locationService.resolveLocality(for: location) ?? "当前位置"
+            locationName = (try? await locationService.resolveLocality(for: location)) ?? "当前位置"
             weather = try await weatherService.fetchWeather(
                 latitude: location.coordinate.latitude,
                 longitude: location.coordinate.longitude
             )
         } catch {
             locationName = "定位失败"
-            errorMessage = nil
+            // WeatherKit requires paid developer account; silently skip weather
+            weather = nil
         }
 
         let items = LocalDataService.shared.fetchClothingItems(context: context)

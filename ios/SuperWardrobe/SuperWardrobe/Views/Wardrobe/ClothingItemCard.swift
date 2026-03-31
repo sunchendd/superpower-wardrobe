@@ -11,7 +11,9 @@ struct ClothingItemCard: View {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
+                        .frame(maxWidth: .infinity)
                         .frame(height: 180)
+                        .clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 } else {
                     RoundedRectangle(cornerRadius: 12)

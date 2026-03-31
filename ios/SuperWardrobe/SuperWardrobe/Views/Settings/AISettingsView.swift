@@ -6,6 +6,7 @@ struct AISettingsView: View {
     @State private var showKey = false
     @State private var isTesting = false
     @State private var testResult: Bool?
+    @State private var testErrorMessage: String?
 
     var body: some View {
         Form {
@@ -50,10 +51,22 @@ struct AISettingsView: View {
                     }
                 }
 
+                if let errMsg = testErrorMessage, testResult == false {
+                    Text(errMsg)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+
                 Button {
                     Task {
                         isTesting = true
-                        testResult = (try? await aiService.testAPI()) == true
+                        testErrorMessage = nil
+                        do {
+                            testResult = try await aiService.testAPI()
+                        } catch {
+                            testResult = false
+                            testErrorMessage = error.localizedDescription
+                        }
                         isTesting = false
                     }
                 } label: {

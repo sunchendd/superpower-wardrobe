@@ -29,14 +29,14 @@ enum AIProvider: String, CaseIterable, Identifiable {
 
     var visionModel: String {
         switch self {
-        case .qwen:     return "qwen-vl-plus"   // 支持图片
+        case .qwen:     return "qwen-vl-plus"   // 支持图片识别
         case .deepseek: return ""               // 不支持视觉
         }
     }
 
     var textModel: String {
         switch self {
-        case .qwen:     return "qwen-plus"
+        case .qwen:     return "qwen-turbo"     // 快速・低成本
         case .deepseek: return "deepseek-chat"
         }
     }

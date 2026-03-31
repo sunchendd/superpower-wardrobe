@@ -307,6 +307,8 @@ private struct PremiumClothingCard: View {
                 Image(uiImage: img)
                     .resizable()
                     .scaledToFill()
+                    .frame(maxWidth: .infinity)
+                    .clipped()
             } else {
                 ZStack {
                     LinearGradient(
@@ -413,6 +415,8 @@ private struct LocalItemDetailView: View {
                 Image(uiImage: img)
                     .resizable()
                     .scaledToFill()
+                    .frame(maxWidth: .infinity)
+                    .clipped()
             } else {
                 ZStack {
                     LinearGradient(

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA11223344556677AABBCCEE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA11223344556677AABBCCDD /* Assets.xcassets */; };
 		03C80BDEE187A5CD03F6E368 /* AddItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820CC5855309AA546853689C /* AddItemViewModel.swift */; };
 		05FAD592544540E63DF0E450 /* PurchaseRecommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E1357172887D2B228E82010 /* PurchaseRecommendation.swift */; };
 		0808D8C664E1095B5E7AA5F5 /* DailyRecommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0D6B93D37644C20F4027340 /* DailyRecommendation.swift */; };
@@ -138,6 +139,7 @@
 		F6DE68A9F5963814A02E46F2 /* WardrobeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WardrobeView.swift; sourceTree = "<group>"; };
 		F9343A01C2556B6A56969C47 /* WeatherKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherKitService.swift; sourceTree = "<group>"; };
 		FF47303E1382BFFB6ADA4673 /* SuperWardrobe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperWardrobe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA11223344556677AABBCCDD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -235,6 +237,7 @@
 		73DEC0FC53F1EB52D77FC06C /* SuperWardrobe */ = {
 			isa = PBXGroup;
 			children = (
+				AA11223344556677AABBCCDD /* Assets.xcassets */,
 				0BA920D57B0C1D0FA30E7570 /* ContentView.swift */,
 				D2D17468C704A13A31CFD4DE /* SuperWardrobeApp.swift */,
 				7B7B2CF1068BC91909CC834E /* Models */,
@@ -384,6 +387,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 274BCC1F5454B1B14E325E35 /* Build configuration list for PBXNativeTarget "SuperWardrobeApp" */;
 			buildPhases = (
+				AA11223344556677AABBCCFF /* Resources */,
 				D5D27D5DE053CD3F2FBD2EE4 /* Sources */,
 			);
 			buildRules = (
@@ -433,6 +437,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA11223344556677AABBCCFF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA11223344556677AABBCCEE /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5A11FDDCE036874556761407 /* Sources */ = {

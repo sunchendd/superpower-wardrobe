@@ -1,0 +1,12 @@
+{
+  "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/SuperWardrobe/Models/Category.swift" : {
+    "abi-baseline-json" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe.abi.json",
+    "const-values" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-primary.swiftconstvalues",
+    "dependencies" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-primary.d",
+    "diagnostics" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-primary.dia",
+    "objc-header" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe-Swift.h",
+    "swiftdoc" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe.swiftdoc",
+    "swiftmodule" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe.swiftmodule",
+    "swiftsourceinfo" : "/Users/sunchendong/Desktop/vscode/superpower-wardrobe/ios/SuperWardrobe/SuperWardrobe/build/SuperWardrobe.build/Release-iphonesimulator/SuperWardrobe.build/Objects-normal/x86_64/SuperWardrobe.swiftsourceinfo"
+  }
+}
